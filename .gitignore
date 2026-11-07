@@ -1,0 +1,44 @@
+# --- Secrets -----------------------------------------------------------------
+.local/
+.env
+.env.*
+!.env.example
+
+# --- Course / internal material (kept locally, not part of the public project) --
+# Progress decks, run evidence (test logs, benchmark output, backups metadata,
+# issuer PDFs), course brief and agent working notes.
+reports/
+evidence/
+PROJECT_MEMORY.md
+AGENTS.md
+THONG_TIN_DU_AN_EQUITY_RESEARCH_PLATFORM.md
+# Course data-preparation pipeline, review datasets, policies and their tests.
+# They depend on a local research snapshot outside this repository. The public
+# project ships a self-contained seed in db/seed and a one-command installer instead.
+data/
+scripts/
+tests/
+config/
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.pyc
+.venv*/
+
+# --- Node / Nx application ----------------------------------------------------
+node_modules/
+.next/
+dist/
+out-tsc/
+coverage/
+.nx/cache/
+.nx/workspace-data/
+test-results/
+playwright-report/
+blob-report/
+
+# --- Editors / OS / temp ----------------------------------------------------------
+.~lock.*#
+.DS_Store
+*.swp
+.idea/

@@ -1,0 +1,257 @@
+erDiagram
+    companies {
+        number company_id PK
+        string company_key
+        string company_name
+        string tax_code
+        string created_at
+    }
+    securities {
+        number security_id PK
+        number company_id FK
+        string symbol
+        string exchange_code
+        string security_kind
+    }
+    data_sources {
+        number source_id PK
+        string source_code
+        string source_name
+    }
+    source_artifacts {
+        number artifact_id PK
+        number source_id FK
+        string artifact_kind
+        string sha256
+        string storage_path
+        string source_url
+        string collected_at
+        string hosting_note
+    }
+    etl_batches {
+        number batch_id PK
+        string batch_key
+        string contract_version
+        string mapping_version
+        string batch_status
+        string started_at
+        string finished_at
+        number received_count
+        number imported_count
+        number rejected_count
+        number skipped_count
+    }
+    staging_facts {
+        number staging_id PK
+        number batch_id FK
+        number row_no
+        number artifact_id FK
+        string source_symbol
+        string fiscal_year_raw
+        string item_code_raw
+        string value_text
+        string row_status
+        string payload
+    }
+    etl_errors {
+        number error_id PK
+        number batch_id FK
+        number staging_id FK
+        string error_code
+        string error_message
+        string logged_at
+    }
+    financial_items {
+        number item_id PK
+        string item_code
+        string item_name
+        string statement_kind
+        string value_kind
+    }
+    financial_reports {
+        number report_id PK
+        number company_id FK
+        number fiscal_year
+        string period_kind
+        string statement_kind
+        string scope_code
+        string source_report_type
+        number artifact_id FK
+        string mapping_version
+        number report_version
+        date fiscal_start
+        date fiscal_end
+        string publication_at
+        number publication_artifact_id FK
+        string currency_code
+        string original_unit
+        number unit_multiplier
+        string metadata_status
+        number batch_id FK
+    }
+    financial_facts {
+        number fact_id PK
+        number report_id FK
+        number item_id FK
+        string statement_kind FK
+        string value_text
+        number value_original
+        number value_vnd
+        string quality_status
+        string raw_locator
+        string raw_code
+        string raw_name
+    }
+    fact_corrections {
+        number correction_id PK
+        number fact_id FK
+        string correction_key
+        number new_value_original
+        number new_value_vnd
+        number evidence_artifact_id FK
+        number evidence_page
+        string reason
+        string review_status
+        string reviewed_by
+        string reviewed_at
+        number supersedes_id FK
+    }
+    report_sets {
+        number report_set_id PK
+        number company_id FK
+        number fiscal_year
+        string scope_code
+        number selection_version
+        string dataset_version
+        string set_state
+        string acceptance_status
+        string temporal_mode
+        string created_at
+    }
+    report_set_members {
+        number report_set_id PK, FK
+        string statement_kind PK, FK
+        number report_id FK
+    }
+    report_set_facts {
+        number selection_fact_id PK
+        number report_set_id FK
+        number report_id FK
+        number item_id FK
+        number fact_id FK
+        number correction_id FK
+        string selected_quality
+    }
+    report_heads {
+        number company_id PK, FK
+        number fiscal_year PK, FK
+        string scope_code PK, FK
+        number report_set_id FK
+        number lock_version
+    }
+    metric_definitions {
+        number metric_id PK
+        string metric_code
+        string formula_version
+        string metric_name
+        string formula_text
+        string display_unit
+        number decimal_places
+    }
+    metric_dependencies {
+        number metric_id PK, FK
+        number input_position PK
+        number item_id FK
+        number year_offset
+    }
+    calculation_runs {
+        number run_id PK
+        string run_key
+        number report_set_id FK
+        number previous_set_id FK
+        string engine_version
+        string run_status
+        string started_at
+    }
+    metric_results {
+        number result_id PK
+        number run_id FK
+        number metric_id FK
+        number metric_value
+        string result_status
+        string reason_codes
+    }
+    metric_input_facts {
+        number result_id PK, FK
+        number input_position PK
+        number selection_fact_id FK
+    }
+    quality_issues {
+        number issue_id PK
+        number report_id FK
+        number fact_id FK
+        string rule_code
+        string severity
+        string issue_status
+        string details
+        number evidence_artifact_id FK
+    }
+    business_change_log {
+        number change_id PK
+        string entity_name
+        string entity_key
+        string action_code
+        string old_data
+        string new_data
+        string actor_name
+        string changed_at
+    }
+    daily_prices {
+        number price_id PK
+        number security_id FK
+        date trading_date
+        number artifact_id FK
+        string price_basis
+        string currency_code
+        number price_multiplier
+        number open_price
+        number high_price
+        number low_price
+        number close_price
+        number volume
+    }
+    companies ||--o{ securities : f1
+    data_sources ||--o{ source_artifacts : f1
+    etl_batches ||--o{ staging_facts : f1
+    source_artifacts |o--o{ staging_facts : f2
+    etl_batches ||--o{ etl_errors : f1
+    staging_facts |o--o{ etl_errors : f2
+    companies ||--o{ financial_reports : f1
+    source_artifacts ||--o{ financial_reports : f2
+    source_artifacts |o--o{ financial_reports : f3
+    etl_batches ||--o{ financial_reports : f4
+    financial_reports ||--o{ financial_facts : f1
+    financial_items ||--o{ financial_facts : f2
+    financial_facts ||--o{ fact_corrections : f1
+    source_artifacts ||--o{ fact_corrections : f2
+    fact_corrections |o--o{ fact_corrections : f3
+    companies ||--o{ report_sets : f1
+    report_sets ||--o{ report_set_members : f1
+    financial_reports ||--o{ report_set_members : f2
+    report_set_members ||--o{ report_set_facts : f1
+    financial_facts ||--o{ report_set_facts : f2
+    fact_corrections |o--o{ report_set_facts : f3
+    report_sets ||--o{ report_heads : f1
+    metric_definitions ||--o{ metric_dependencies : f1
+    financial_items ||--o{ metric_dependencies : f2
+    report_sets ||--o{ calculation_runs : f1
+    report_sets |o--o{ calculation_runs : f2
+    calculation_runs ||--o{ metric_results : f1
+    metric_definitions ||--o{ metric_results : f2
+    metric_results ||--o{ metric_input_facts : f1
+    report_set_facts ||--o{ metric_input_facts : f2
+    financial_reports ||--o{ quality_issues : f1
+    financial_facts |o--o{ quality_issues : f2
+    source_artifacts |o--o{ quality_issues : f3
+    securities ||--o{ daily_prices : f1
+    source_artifacts ||--o{ daily_prices : f2

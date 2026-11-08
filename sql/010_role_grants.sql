@@ -13,6 +13,8 @@ GRANT READ ON __OWNER__.v_report_lines TO __APP_ROLE__;
 GRANT READ ON __OWNER__.v_import_batches TO __APP_ROLE__;
 GRANT READ ON __OWNER__.v_import_errors TO __APP_ROLE__;
 GRANT EXECUTE ON __OWNER__.pkg_screening TO __APP_ROLE__;
+-- Added by 019: metric catalog.
+GRANT READ ON __OWNER__.v_metric_catalog TO __APP_ROLE__;
 
 GRANT READ ON __OWNER__.v_company_directory TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_current_report_sets TO __ETL_ROLE__;
@@ -23,6 +25,7 @@ GRANT READ ON __OWNER__.v_metric_lineage TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_report_lines TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_import_batches TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_import_errors TO __ETL_ROLE__;
+GRANT READ ON __OWNER__.v_metric_catalog TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_etl_batches TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_etl_errors TO __ETL_ROLE__;
 GRANT READ ON __OWNER__.v_calculation_runs TO __ETL_ROLE__;

@@ -31,7 +31,10 @@ BEGIN
 
   -- 2. Every call into the ETL facade.
   IF NOT policy_exists('ERP_ETL_API_POL') THEN
-    EXECUTE IMMEDIATE 'CREATE AUDIT POLICY erp_etl_api_pol ACTIONS EXECUTE ON ERP_DESIGN_V1.PKG_ETL_API, EXECUTE ON ERP_IMPORT_TEST.PKG_ETL_API';
+    SELECT LISTAGG('EXECUTE ON ' || owner || '.PKG_ETL_API', ', ') WITHIN GROUP (ORDER BY owner) INTO v_sql
+      FROM dba_objects WHERE object_name = 'PKG_ETL_API' AND object_type = 'PACKAGE'
+       AND owner IN ('ERP_DESIGN_V1', 'ERP_IMPORT_TEST');
+    EXECUTE IMMEDIATE 'CREATE AUDIT POLICY erp_etl_api_pol ACTIONS ' || v_sql;
   END IF;
 
   -- 3. Successful and failed sessions of service accounts (built-in policy logs failures only).
@@ -47,5 +50,16 @@ END;
 /
 AUDIT POLICY erp_data_change_pol;
 AUDIT POLICY erp_etl_api_pol;
-AUDIT POLICY erp_session_pol BY ERP_APP, ERP_ETL, ERP_MONITOR, ERP_TEST_APP, ERP_TEST_ETL;
-AUDIT POLICY erp_service_denied_pol BY ERP_APP, ERP_ETL, ERP_MONITOR, ERP_TEST_APP, ERP_TEST_ETL WHENEVER NOT SUCCESSFUL;
+-- Session and denied-action policies apply to the service accounts that exist in this
+-- database (a fresh install has no ERP_TEST_* accounts).
+DECLARE
+  v_users VARCHAR2(400);
+BEGIN
+  SELECT LISTAGG(username, ', ') WITHIN GROUP (ORDER BY username) INTO v_users
+    FROM dba_users WHERE username IN ('ERP_APP', 'ERP_ETL', 'ERP_MONITOR', 'ERP_TEST_APP', 'ERP_TEST_ETL');
+  IF v_users IS NOT NULL THEN
+    EXECUTE IMMEDIATE 'AUDIT POLICY erp_session_pol BY ' || v_users;
+    EXECUTE IMMEDIATE 'AUDIT POLICY erp_service_denied_pol BY ' || v_users || ' WHENEVER NOT SUCCESSFUL';
+  END IF;
+END;
+/

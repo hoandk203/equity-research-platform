@@ -1,0 +1,72 @@
+# Whole stack: Oracle AI Database 26ai Free + one-time schema install + NestJS API + Next.js web.
+#   cp .env.example .env   # set ORACLE_PWD
+#   docker compose up -d   # first start creates the database and installs the schema (several minutes)
+#   open http://localhost:3000  ·  API docs http://localhost:4000/api/docs
+name: equity-research-platform
+
+services:
+  # Prepares the shared credentials volume for the oracle user (uid 54321) before Oracle starts.
+  secrets-init:
+    image: container-registry.oracle.com/database/free@sha256:f988b0c04c4c386cd306a2a914c0d7a9702d83acc31b064a28ad8eb6278a8fba
+    user: root
+    entrypoint: ["bash", "-c", "chown 54321:54321 /opt/erp/secrets && chmod 755 /opt/erp/secrets"]
+    volumes:
+      - erp-secrets:/opt/erp/secrets
+    restart: "no"
+
+  oracle:
+    image: container-registry.oracle.com/database/free@sha256:f988b0c04c4c386cd306a2a914c0d7a9702d83acc31b064a28ad8eb6278a8fba
+    environment:
+      ORACLE_PWD: ${ORACLE_PWD:?Set ORACLE_PWD in .env (see .env.example)}
+    ports:
+      - "${ORACLE_PORT:-1521}:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/docker/setup:/opt/oracle/scripts/setup:ro
+      - ./db:/opt/erp/db:ro
+      - ./sql:/opt/erp/sql:ro
+      - erp-secrets:/opt/erp/secrets
+    depends_on:
+      secrets-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/opt/oracle/checkDBStatus.sh"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15m
+      retries: 40
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      API_ENV_FILE: /run/erp/api.env
+      ORACLE_CONNECT_STRING: oracle:1521/FREEPDB1
+      CORS_ORIGIN: http://localhost:${WEB_PORT:-3000}
+    volumes:
+      - erp-secrets:/run/erp:ro
+    depends_on:
+      oracle:
+        condition: service_healthy
+    # The schema install runs inside the oracle container after it reports healthy;
+    # the API exits until its credentials file exists and Docker restarts it.
+    restart: on-failure:30
+    ports:
+      - "${API_PORT:-4000}:4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-4000}/api
+    depends_on:
+      - api
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+volumes:
+  oracle-data:
+  erp-secrets:

@@ -1,0 +1,21 @@
+# Keep build contexts small and free of secrets/local material.
+node_modules
+**/node_modules
+dist
+**/.next
+.nx
+coverage
+.git
+.local
+**/.env
+**/.env.*
+!**/.env.example
+reports
+evidence
+data
+scripts
+tests
+config
+docs
+design
+*.md

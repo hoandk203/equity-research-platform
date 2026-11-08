@@ -1,0 +1,27 @@
+{
+  "name": "db",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "db/src",
+  "tags": [
+    "scope:db"
+  ],
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash db/install.sh",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash db/verify.sh",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    }
+  }
+}

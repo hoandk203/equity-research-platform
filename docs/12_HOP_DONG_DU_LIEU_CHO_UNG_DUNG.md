@@ -1,12 +1,12 @@
 # Hợp đồng dữ liệu cho ứng dụng (backend/frontend)
 
-Cập nhật 08/11/2026. Tài liệu này là điểm vào cho người viết API NestJS và giao diện Next.js. Mọi dữ liệu đọc qua view/hàm của schema `ERP_DESIGN_V1`; không có quyền trên bảng gốc.
+Cập nhật 08/11/2026. Tài liệu này là điểm vào cho người viết API NestJS và giao diện Next.js. API REST đã triển khai trên hợp đồng này: xem [README](../README.md#api) và [docs/15](15_KET_QUA_UNG_DUNG.md). Mọi dữ liệu đọc qua view/hàm của schema `ERP_DESIGN_V1`; không có quyền trên bảng gốc.
 
 ## 1. Kết nối
 
 | Mục đích | Tài khoản | Ghi chú |
 |---|---|---|
-| Mọi màn hình | `ERP_APP` | Chỉ đọc 9 view và gọi `pkg_screening` |
+| Mọi màn hình | `ERP_APP` | Chỉ đọc 10 view và gọi `pkg_screening` |
 | Nhập dữ liệu (không làm trên web) | `ERP_ETL` | Script Python, qua `pkg_etl_api` |
 
 - Chuỗi kết nối: `//127.0.0.1:1521/FREEPDB1`. Driver đề xuất: `node-oracledb` chế độ thin (không cần Oracle Client).
@@ -32,6 +32,7 @@ Tám mã chỉ số (`metric_code`): `REVENUE_GROWTH`, `GROSS_MARGIN`, `NET_MARG
 | Sàng lọc (FR-04) | `pkg_screening.screen` | Mục 5 |
 | So sánh (FR-05) | `v_current_metrics` | `WHERE symbol IN (:a,:b,:c) AND fiscal_year=:y` |
 | Đợt nhập (FR-06) | `v_import_batches`, `v_import_errors` | `ORDER BY batch_id DESC`; lỗi: `WHERE batch_id=:b` |
+| Công thức, danh sách chỉ số cho form sàng lọc | `v_metric_catalog` (sql/019) | `WHERE formula_version='1.0.0'` |
 
 **Truy vết lineage phải lọc theo `result_id`,** không lọc theo mã/năm/chỉ số. Cách lọc theo mã/năm/chỉ số chậm hơn khoảng 160 lần (docs/11, Q3/Q7).
 

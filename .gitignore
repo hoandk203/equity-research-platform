@@ -33,6 +33,8 @@ out-tsc/
 coverage/
 .nx/cache/
 .nx/workspace-data/
+.nx/migrate-runs/
+.nx/polygraph/
 test-results/
 playwright-report/
 blob-report/
@@ -42,3 +44,9 @@ blob-report/
 .DS_Store
 *.swp
 .idea/
+
+# Next.js
+.next
+out
+vitest.config.*.timestamp*
+.vitest

@@ -1,58 +1,115 @@
-# Equity Research Platform — Oracle MVP
+# Equity Research Platform
 
-**Trạng thái 08/11/2026:** đã nhập và tính/lưu thật bộ FPT–HPG–VNM trên Oracle: 36 báo cáo, 132 số nguồn, 9 hiệu chỉnh, 12 snapshot; **9 run hoàn tất, 72 chỉ số VALID và 171 liên kết đầu vào**, tất cả khớp bộ chuẩn. Có 9 view chỉ đọc, ETL facade và 4 vai trò tài khoản (owner không đăng nhập, `ERP_APP`, `ERP_ETL`, `ERP_MONITOR`). **Đợt quản trị vận hành:** tablespace riêng `ERP_DATA` + quota, 4 policy unified audit + truy vấn giám sát, tối ưu đo trên 200× dữ liệu (Q1/Q4 nhanh ~25 lần), phục hồi logic bằng Data Pump và phục hồi vật lý bằng RMAN sau khi mất datafile. Kiểm thử: 10 audit, 38 phân quyền (chạy lại sau tối ưu), 39 calculation, 31 import, 21 cấu trúc, 13 Python đều đạt. ERD vẫn 23 bảng/175 cột/35 FK. **Database đã đủ cho 5 màn hình** (12 view, hàm sàng lọc PASS/FAIL/UNKNOWN; 15 ca API ứng dụng đạt). Phạm vi dữ liệu chốt 3 mã, chưa có giá ngày (ADR-29). Chưa có API/UI. **Đĩa máy còn ~1,2 GB (98%)** — xem rủi ro ở docs/11.
+Cơ sở dữ liệu báo cáo tài chính trên **Oracle AI Database 26ai**, kèm API **NestJS** và giao diện **Next.js** để xem báo cáo, truy vết chỉ số tài chính tới từng số liệu gốc, sàng lọc và so sánh doanh nghiệp niêm yết Việt Nam.
 
-Đọc [PROJECT_MEMORY.md](PROJECT_MEMORY.md) để tiếp tục công việc. Review các lựa chọn quan trọng tại [31 quyết định thiết kế](docs/06_QUYET_DINH_CAN_REVIEW.md).
+Dữ liệu mẫu: FPT, HPG, VNM, báo cáo tài chính hợp nhất năm 2022–2025. Tổng cộng 132 số liệu đã đối chiếu với báo cáo kiểm toán (9 số được hiệu chỉnh theo PDF kiểm toán) và 8 chỉ số cho các năm 2023–2025.
 
-| Tài liệu | Nội dung |
+## Tính năng
+
+| Màn hình | Nội dung |
 |---|---|
-| [Đặc tả MVP](docs/01_DAC_TA_MVP_ORACLE.md) | FR/NFR, phạm vi và nghiệm thu |
-| [Contract và công thức](docs/02_HOP_DONG_DU_LIEU_VA_CHI_SO.md) | Dữ liệu, version, chất lượng, bộ 8 chỉ số |
-| [Bộ mẫu đã đối chiếu](data/pilot_verified/README.md) | 12 kỳ, 132 giá trị đã review, 9 correction, 72 chỉ số hồi cứu |
-| [Biên bản chốt dữ liệu](docs/07_KET_QUA_DOI_CHIEU_VA_CHOT_DU_LIEU.md) | Nguồn, đơn vị, scope, niên độ và kết quả kiểm tra |
-| [ERD và giải thích](docs/04_THIET_KE_ERD.md) | Quan hệ, chuẩn hóa, snapshot/lineage và giới hạn |
-| [Từ điển dữ liệu](docs/05_TU_DIEN_DU_LIEU.md) | Kiểu/NULL/PK/FK/UK/CHECK của 175 cột |
-| [DDL](sql/001_schema.sql) | Script dựng 23 bảng và indexes |
-| [Bằng chứng Oracle](evidence/oracle_verified_pilot/validation.json) | Phiên bản, schema, hash, kiểm tra và giới hạn |
-| [Phân tích ứng dụng web](docs/13_PHAN_TICH_UNG_DUNG.md) | Phạm vi 5 màn hình, quy tắc hiển thị, yêu cầu phi chức năng, dữ liệu thực tế (đã duyệt) |
-| [Kế hoạch ứng dụng web](docs/14_KE_HOACH_UNG_DUNG.md) | Kiến trúc, 11 API, giao diện, phiên bản, kiểm thử, các bước B0–B10 (chờ duyệt) |
-| **[Hợp đồng dữ liệu cho ứng dụng](docs/12_HOP_DONG_DU_LIEU_CHO_UNG_DUNG.md)** | **Điểm vào cho backend/frontend**: kết nối, màn hình → view, cột, hàm sàng lọc, mã lỗi |
-| [Quản trị vận hành](docs/11_QUAN_TRI_VAN_HANH_ORACLE.md) | Tablespace/quota, audit/giám sát, tối ưu trước–sau, Data Pump và RMAN phục hồi thật |
-| [View và phân quyền](docs/10_VIEW_VA_PHAN_QUYEN_ORACLE.md) | 9 view, ETL facade, role/user, quy tắc chỉ số hiện hành, 38 ca kiểm thử |
-| [Kết quả nhập Oracle](docs/08_NHAP_DU_LIEU_ORACLE.md) | Package, transaction, chống trùng, rollback, 31 kiểm thử và quyết định |
-| [Bằng chứng nhập thật](evidence/oracle_import/validation.json) | Batch 132 số/9 hiệu chỉnh và đối chiếu đọc từ database |
-| [Tính và lưu chỉ số](docs/09_TINH_VA_LUU_CHI_SO_ORACLE.md) | Package, 72 kết quả, 171 lineage, transaction và 39 ca kiểm thử |
-| [Bằng chứng calculation](evidence/oracle_calculation/validation.json) | 9 run COMPLETED, kết quả và đầu vào đọc lại từ database |
-| [View](sql/008_read_views.sql) · [ETL API](sql/009_etl_api.sql) · [Grants](sql/010_role_grants.sql) | 9 view chỉ đọc, package facade cho ETL, cấp quyền theo role |
-| [Truy vấn demo APP](sql/011_demo_app_queries.sql) · [ETL](sql/012_demo_etl_status.sql) | Danh sách, chỉ số hiện hành, sàng lọc, lineage; trạng thái batch/run |
-| [Bằng chứng phân quyền](evidence/oracle_access/validation.json) | Tài khoản/quyền thực tế trên ERP_DESIGN_V1, đối chiếu 72/171 khi đọc bằng ERP_APP |
-| [Kiểm thử phân quyền](evidence/oracle_access_tests/validation.json) | 38 ca trên schema kiểm thử bằng đăng nhập thật |
-| [SQL quản trị 013–017](sql/013_storage_tablespace.sql) | Tablespace, audit policy, role giám sát, truy vấn giám sát, index tối ưu |
-| Bằng chứng quản trị | [lưu trữ](evidence/oracle_storage/validation.json) · [audit](evidence/oracle_audit/validation.json) · [hiệu năng](evidence/oracle_performance/comparison.json) · [phục hồi logic](evidence/oracle_backup_restore/logical_restore.json) · [phục hồi vật lý](evidence/oracle_backup_restore/physical_recovery.json) |
+| Doanh nghiệp | Tìm theo mã hoặc tên, gõ có dấu hay không dấu đều được ("hoa phat" → Hòa Phát) |
+| Chi tiết | 3 báo cáo tài chính theo từng dòng; số đã hiệu chỉnh kèm lý do, trang PDF kiểm toán; 8 chỉ số; **truy vết** một chỉ số tới từng đầu vào (năm t / t−1, số gốc, hiệu chỉnh, hash và trang PDF) |
+| Sàng lọc | Nhiều điều kiện AND; Oracle trả **Đạt / Không đạt / Chưa xác định** cho từng doanh nghiệp và từng điều kiện |
+| So sánh | 2–3 doanh nghiệp, cùng năm, cùng phiên bản công thức; thiếu dữ liệu hiện "Chưa xác định", không lấy số năm khác |
+| Đợt nhập | Các đợt nhập dữ liệu với bộ đếm nhận / nhập / từ chối / bỏ qua do trùng, cùng lỗi chi tiết |
 
-**ERD tổng thể:** [SVG](design/erd_full.svg) · [PNG](design/erd_full.png) · [PDF](design/erd_full.pdf)
+Nguyên tắc: ứng dụng **chỉ đọc**; mọi quy tắc nghiệp vụ (kiểm định khi nhập, tính chỉ số, sàng lọc) nằm trong Oracle (PL/SQL). Dữ liệu thiếu không bao giờ hiển thị thành 0.
 
-![ERD đầy đủ 23 bảng](design/erd_full.png)
+## Kiến trúc
 
-[ERD chỉ số và ETL](design/erd_metrics_etl.png) · [Mermaid đầy đủ](design/erd_full.mmd)
-
-Chạy kiểm tra từ thư mục gốc CSDL_HocSau:
-
-```bash
-python3 Quan_Tri_CSDL/scripts/prepare_pilot_review.py
-python3 Quan_Tri_CSDL/scripts/build_verified_pilot.py
-python3 Quan_Tri_CSDL/scripts/check_oracle_design.py --dataset Quan_Tri_CSDL/data/pilot_verified --evidence-dir Quan_Tri_CSDL/evidence/oracle_verified_pilot
-python3 Quan_Tri_CSDL/scripts/check_oracle_import.py
-python3 Quan_Tri_CSDL/scripts/import_verified_pilot.py
-python3 Quan_Tri_CSDL/scripts/check_oracle_calculation.py
-python3 Quan_Tri_CSDL/scripts/calculate_verified_pilot.py
-python3 Quan_Tri_CSDL/scripts/check_oracle_access.py
-python3 Quan_Tri_CSDL/scripts/deploy_oracle_access.py
-python3 Quan_Tri_CSDL/scripts/check_oracle_app_api.py
-python3 Quan_Tri_CSDL/scripts/check_oracle_audit.py
-python3 Quan_Tri_CSDL/scripts/benchmark_oracle.py --label OPT
-python3 Quan_Tri_CSDL/scripts/backup_restore_oracle.py --logical
-python3 -m unittest discover -s Quan_Tri_CSDL/tests -v
+```
+Trình duyệt ── Next.js 16 (React Query · Redux Toolkit · React Hook Form + zod)
+     │  HTTP/JSON, header X-Request-Id
+     ▼
+NestJS 11 API (/api, Swagger /api/docs) ── node-oracledb 26 (thin), SQL cố định + bind variable
+     │  tài khoản ERP_APP: chỉ đọc 10 view và gọi hàm sàng lọc
+     ▼
+Oracle AI Database 26ai Free ── 23 bảng · 14 trigger · 5 package · 13 view · 4 vai trò tài khoản · unified audit
 ```
 
-Không sửa snapshot nguồn hoặc dữ liệu lịch sử. Không tự chạy DDL dựng mới lên schema có dữ liệu. Các runner dùng hai schema riêng thuộc dự án, không drop; migration ngày tải nullable và nâng guards được mô tả trong docs/08–09. Mật khẩu tài khoản APP/ETL sinh ngẫu nhiên, chỉ lưu ở `.local/` (đã gitignore), không ghi vào evidence. `deploy_oracle_access.py` mỗi lần chạy thêm một batch replay vào schema chính; `backup_restore_oracle.py --physical` đưa `ERP_DATA` offline vài giây. Việc ưu tiên tiếp theo: xử lý dung lượng đĩa/archive log, rồi làm API/UI theo docs/12.
+- **Phân quyền tối thiểu.** API chỉ khởi động với tài khoản `ERP_APP`, không có quyền trên bảng gốc. Nhập dữ liệu dùng tài khoản `ERP_ETL` qua một package facade. Chủ schema không đăng nhập được.
+- **Truy vết audit.** Mỗi request mang một mã định danh, được gắn vào `CLIENT_IDENTIFIER` của session Oracle.
+- **Bất biến và phiên bản.** Số liệu gốc, hiệu chỉnh và snapshot báo cáo không bị ghi đè. Mỗi chỉ số khóa đúng snapshot năm t và t−1 đã dùng.
+
+Monorepo **Nx**:
+
+| Thư mục | Nội dung |
+|---|---|
+| `apps/api` | NestJS: config có danh sách tài khoản được phép, pool Oracle, 6 module (health, companies, reports, metrics, screening, imports) |
+| `apps/web` | Next.js App Router, 5 màn hình |
+| `apps/web-e2e` | Kiểm thử đầu-cuối Playwright |
+| `libs/contracts` | Kiểu dữ liệu và giới hạn dùng chung giữa web và API |
+| `db` | Bộ cài một lệnh, seed dữ liệu mẫu, script kiểm tra |
+| `sql` | DDL, trigger, package, view, phân quyền, audit, tối ưu |
+| `docs`, `design` | Tài liệu thiết kế, ERD |
+
+## Chạy bằng Docker Compose
+
+Yêu cầu: Docker có Compose, khoảng 15 GB trống cho image Oracle, quyền tải image từ `container-registry.oracle.com`.
+
+```bash
+cp .env.example .env          # đặt ORACLE_PWD
+docker compose up -d          # lần đầu: tạo database + cài schema, mất vài phút
+docker compose logs -f oracle # chờ "[db:install] done"
+```
+
+Sau đó mở:
+- Giao diện: http://localhost:3000
+- Tài liệu API: http://localhost:4000/api/docs
+
+Lần chạy đầu, container Oracle tự chạy `db/install.sh`. Mật khẩu các tài khoản dịch vụ được sinh ngẫu nhiên và chia sẻ cho API qua một volume riêng.
+
+## Chạy khi phát triển (Oracle có sẵn)
+
+Yêu cầu: Node.js 24, một container Oracle AI Database 26ai Free đang chạy (mặc định tên `oracle-free`, PDB `FREEPDB1`).
+
+```bash
+npm ci
+npm run db:install            # dựng schema ERP_DESIGN_V1, nạp seed, kiểm tra, ghi apps/api/.env
+npm run start:api             # http://localhost:4000/api  (Swagger: /api/docs)
+npm run start:web             # http://localhost:3000
+```
+
+`npm run db:install` dành cho database **chưa có** schema; nếu `ERP_DESIGN_V1` đã tồn tại (đã cài trước đó), lệnh dừng lại có chủ ý. Khi đó chỉ cần `npm run db:verify` để kiểm tra dữ liệu, rồi chạy API bằng `apps/api/.env` có sẵn.
+
+`db/install.sh` cấu hình được qua biến môi trường: `ORACLE_CONTAINER`, `ERP_OWNER`, `ERP_APP_USER`, `ERP_TABLESPACE`, `ERP_WITH_AUDIT`… Bộ cài **không bao giờ sửa schema đã tồn tại**: nếu owner đã có, nó dừng lại. Nó in kết quả đối chiếu (132 dòng, 9 hiệu chỉnh, 12 bộ báo cáo, 72 chỉ số, 171 đầu vào, khớp từng giá trị) và ghi mật khẩu vào `apps/api/.env` cùng `.local/db-accounts.env` (quyền 600, không commit).
+
+## Kiểm thử
+
+```bash
+npm test                      # đơn vị: contracts, api (cấu hình, ánh xạ lỗi, quét SQL chỉ đọc), web (định dạng, Redux, form)
+npm run test:integration      # API trên Oracle thật, chạy trên 2 schema
+npm run test:e2e              # Playwright: luồng demo + trạng thái biên + ảnh chụp vào dist/screenshots
+npm run db:verify             # đối chiếu lại dữ liệu trong database với bộ chuẩn
+npm run lint
+```
+
+Kiểm thử API cần `apps/api/.env` (tài khoản `ERP_APP`). Lượt thứ hai dùng `apps/api/.env.test` (tài khoản `ERP_TEST_APP` trên schema kiểm thử `ERP_IMPORT_TEST`) để kiểm các trạng thái biên.
+
+## API
+
+| Đường dẫn | Mô tả |
+|---|---|
+| `GET /api/health` | Tài khoản Oracle đang dùng, mã request trên session |
+| `GET /api/companies?q=` | Danh sách, tìm không dấu |
+| `GET /api/companies/:symbol` | Thông tin và các bộ báo cáo theo năm |
+| `GET /api/companies/:symbol/reports?year=` | 11 dòng báo cáo (tiền VND dạng chuỗi) |
+| `GET /api/companies/:symbol/metrics?year=` | 8 chỉ số hiện hành |
+| `GET /api/metric-results/:resultId/lineage` | Truy vết một kết quả |
+| `GET /api/metrics/catalog` | Danh mục công thức |
+| `POST /api/screening` | Sàng lọc `{year, conditions:[{metric, op, value}]}`, ngưỡng là tỷ lệ thuần |
+| `GET /api/compare?symbols=&year=` | So sánh 2–3 mã |
+| `GET /api/imports`, `GET /api/imports/:batchId/errors` | Đợt nhập và lỗi |
+
+Lỗi có định dạng thống nhất `{"error": {"code", "message", "requestId"}}`, không lộ chi tiết Oracle.
+
+## Giới hạn dữ liệu
+
+- Phân tích **hồi cứu**: ngày công bố của từng báo cáo chưa được xác minh.
+- Chưa có dữ liệu giá cổ phiếu; màn hình giá chỉ hiển thị thông báo.
+- Dữ liệu mẫu gồm 3 doanh nghiệp. Việc đối chiếu được thực hiện bằng quy trình tự động so với PDF kiểm toán, không phải ý kiến kiểm toán độc lập.
+
+## Tài liệu
+
+Xem [docs/README.md](docs/README.md): đặc tả, hợp đồng dữ liệu và công thức, ERD và từ điển dữ liệu, nhập dữ liệu, tính chỉ số, phân quyền, quản trị vận hành (tablespace, audit, tối ưu, sao lưu – phục hồi), hợp đồng dữ liệu cho ứng dụng, phân tích – kế hoạch – kết quả ứng dụng.

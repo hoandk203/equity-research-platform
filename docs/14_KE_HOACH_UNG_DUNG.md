@@ -1,8 +1,8 @@
 # Kế hoạch ứng dụng web
 
-Phiên bản 1.3 — 08/11/2026. Trạng thái: **chờ người dùng duyệt**. Dựa trên [docs/13 — Phân tích](13_PHAN_TICH_UNG_DUNG.md) (đã duyệt) và [docs/12 — Hợp đồng dữ liệu](12_HOP_DONG_DU_LIEU_CHO_UNG_DUNG.md).
+Phiên bản 1.4 — 08/11/2026. Trạng thái: **đã triển khai toàn bộ B0–B11**; kết quả và các điểm khác kế hoạch ở [docs/15](15_KET_QUA_UNG_DUNG.md). Dựa trên [docs/13 — Phân tích](13_PHAN_TICH_UNG_DUNG.md) (đã duyệt) và [docs/12 — Hợp đồng dữ liệu](12_HOP_DONG_DU_LIEU_CHO_UNG_DUNG.md).
 
-Bản 1.1 bổ sung tech stack do người dùng chỉ định: Nx monorepo, Redux Toolkit, React Hook Form, Swagger. Bản 1.2: theo người dùng, **bỏ MikroORM**; NestJS truy cập Oracle trực tiếp bằng driver `node-oracledb` qua lớp repository; **database giữ nguyên Oracle AI Database 26ai Free** đang chạy. Bản 1.3: repo GitHub là **dự án độc lập** (không gắn môn học): Nx workspace đặt ở gốc repo; thêm project `db` gồm seed tự chứa và bộ cài một lệnh (seed cách A — nạp qua package thật); `data/`, `scripts/`, `tests/`, `config/`, `evidence/`, `reports/` chỉ giữ cục bộ.
+Bản 1.1 bổ sung tech stack do người dùng chỉ định: Nx monorepo, Redux Toolkit, React Hook Form, Swagger. Bản 1.2: theo người dùng, **bỏ MikroORM**; NestJS truy cập Oracle trực tiếp bằng driver `node-oracledb` qua lớp repository; **database giữ nguyên Oracle AI Database 26ai Free** đang chạy. Bản 1.3: repo GitHub là **dự án độc lập** (không gắn môn học): Nx workspace đặt ở gốc repo; thêm project `db` gồm seed tự chứa và bộ cài một lệnh (seed cách A — nạp qua package thật); `data/`, `scripts/`, `tests/`, `config/`, `evidence/`, `reports/` chỉ giữ cục bộ. Bản 1.4: thêm **Docker Compose cho toàn bộ dự án** (oracle + db-install + api + web) ở B11, là cách chạy chính thức cho người clone repo; khi phát triển trên máy này vẫn chạy api/web bằng Node và dùng container Oracle sẵn có.
 
 ## 1. Quyết định đã chốt
 
@@ -15,6 +15,7 @@ Bản 1.1 bổ sung tech stack do người dùng chỉ định: Nx monorepo, Red
 | Lịch sử các lần tính | Không đưa vào 5 màn hình chính |
 | Thời gian | Không gấp; chia bước nhỏ, mỗi bước có tài liệu và kiểm chứng |
 | Repo | Dự án độc lập trên GitHub. Chứa: `apps/`, `libs/`, `db/`, `sql/`, `docs/`, `design/`. Không chứa tài liệu/bằng chứng môn học và pipeline chuẩn bị dữ liệu (phụ thuộc snapshot ngoài repo); các thư mục đó vẫn giữ trên máy |
+| Chạy toàn bộ dự án | **Docker Compose**: `oracle` (image Oracle AI Database 26ai Free, volume dữ liệu), `db-install` (chạy một lần: dựng schema + nạp seed khi database trống), `api` (NestJS), `web` (Next.js). Mật khẩu qua `.env`, không commit. Khi phát triển trên máy này: api/web chạy bằng Node, kết nối container `oracle-free` sẵn có (không thay container dùng chung đó) |
 | Dựng database từ repo | Seed **cách A**: số liệu 3 mã ở dạng văn bản trong `db/seed`, nạp qua đúng package nhập và tính chỉ số (kiểm định, snapshot, lineage như dữ liệu hiện tại). Database chỉ lưu hash/URL của file nguồn nên không cần file PDF hay snapshot |
 
 ## 2. Kiến trúc
@@ -115,6 +116,8 @@ Chọn bản ổn định đã phát hành **ít nhất hai tuần** (tra npm ng
     seed/                          số liệu 3 mã (văn bản): nguồn, 132 dòng nhập, kết quả mong đợi để kiểm tra
     src/                           bộ cài TypeScript (node-oracledb, kết nối quản trị qua biến môi trường)
   sql/                             các file SQL cài đặt (bảng, trigger, package, view, quyền, audit, tối ưu)
+  docker-compose.yml               oracle + db-install + api + web
+  apps/api/Dockerfile  apps/web/Dockerfile  db/Dockerfile   image nhiều tầng, Node gọn
   docs/  design/                   tài liệu kỹ thuật, ERD
 ```
 
@@ -209,7 +212,7 @@ Mỗi bước kết thúc bằng: chạy kiểm thử của bước, cập nhậ
 | **B9** S3 + S4 | Form sàng lọc (React Hook Form + zod, giữ bản nháp trong Redux); bảng so sánh lấy mã từ URL hoặc giỏ so sánh | 2 màn hình | Đúng tiêu chí S3, S4 |
 | ⏸ | *Điểm dừng 3: duyệt giao diện* | | |
 | **B10** Hoàn thiện ứng dụng | Playwright đầu-cuối + ảnh chụp; **docs/15 — Kết quả ứng dụng** | Ảnh và kết quả kiểm thử | `nx run-many -t test` và e2e đạt |
-| **B11** Repo độc lập | **Seed:** xuất từ database hiện tại sang `db/seed` (danh sách nguồn với hash/URL, 132 dòng nhập kèm thông tin hiệu chỉnh, 72 chỉ số + 171 đầu vào mong đợi). **Bộ cài `nx run db:install`:** kiểm tra kết nối quản trị → tạo tablespace, owner, role, user (mật khẩu ngẫu nhiên ghi vào `.env` của api) → chạy `sql/` đúng thứ tự → nạp seed qua `pkg_etl_api` → tính 9 bộ chỉ số → đối chiếu với kết quả mong đợi → tùy chọn cài audit. **README mới** cho dự án độc lập; rà `docs/` bỏ link tới thư mục cục bộ và nội dung riêng môn học | Repo tự dựng được database và chạy ứng dụng | Trên một **schema mới** của cùng Oracle 26ai: cài từ đầu ra đúng 132 số liệu, 9 hiệu chỉnh, 12 snapshot, 72 chỉ số, 171 đầu vào; ứng dụng chạy trên schema đó; schema hiện tại không bị đụng tới |
+| **B11** Repo độc lập | **Seed:** xuất từ database hiện tại sang `db/seed` (danh sách nguồn với hash/URL, 132 dòng nhập kèm thông tin hiệu chỉnh, 72 chỉ số + 171 đầu vào mong đợi). **Bộ cài `nx run db:install`:** kiểm tra kết nối quản trị → tạo tablespace, owner, role, user (mật khẩu ngẫu nhiên ghi vào `.env` của api) → chạy `sql/` đúng thứ tự → nạp seed qua `pkg_etl_api` → tính 9 bộ chỉ số → đối chiếu với kết quả mong đợi → tùy chọn cài audit. **README mới** cho dự án độc lập; rà `docs/` bỏ link tới thư mục cục bộ và nội dung riêng môn học | Repo tự dựng được database và chạy ứng dụng; **Docker Compose** (`docker-compose.yml`, Dockerfile cho api/web/db) | Trên một **schema mới** của cùng Oracle 26ai: cài từ đầu ra đúng 132 số liệu, 9 hiệu chỉnh, 12 snapshot, 72 chỉ số, 171 đầu vào; ứng dụng chạy trên schema đó; schema hiện tại không bị đụng tới. Image api/web build được; `docker compose config` hợp lệ; chạy thử compose với Oracle sẵn có nếu đĩa đủ |
 
 ## 9. Quy ước
 
@@ -227,6 +230,6 @@ Mỗi bước kết thúc bằng: chạy kiểm thử của bước, cập nhậ
 | NestJS 11 thay vì 12 | Bắt buộc do plugin Nx; NestJS 11 vẫn được bảo trì; nếu `@nx/nest` hỗ trợ 12 sau này thì nâng cấp riêng |
 | `@nx/jest` khai báo `ts-jest ^29` | Kiểm tra ngay ở B0 với Jest 30; nếu lỗi thì chọn bản ts-jest/Jest tương thích và ghi lại |
 | Dữ liệu thật thiếu trạng thái biên (cả 72 chỉ số Hợp lệ, 0 lỗi nhập) | Kiểm thử API trên `ERP_IMPORT_TEST`; giao diện kiểm thử thêm bằng dữ liệu giả ở tầng đơn vị |
-| Đĩa phân vùng `/` còn khoảng 4 GB | Mã nguồn, `node_modules`, cache Nx và trình duyệt Playwright nằm trên `/home`; không dùng Docker cho ứng dụng |
+| Đĩa phân vùng `/` còn khoảng 4 GB (Docker lưu image ở đây) | Khi phát triển: mã nguồn, `node_modules`, cache Nx, Playwright nằm trên `/home`; api/web chạy bằng Node. Compose dùng lại image Oracle sẵn có (không tải thêm 13,8 GB); image api/web dùng Node gọn, nhiều tầng. Nếu thiếu chỗ, chuyển thư mục dữ liệu Docker sang `/home` (cần sudo, người dùng tự làm) |
 | Bộ cài cần quyền quản trị Oracle; tạo audit policy cần thêm quyền `AUDIT_ADMIN` | Bộ cài kiểm tra quyền trước; thiếu `AUDIT_ADMIN` thì bỏ qua phần audit kèm cảnh báo, phần còn lại vẫn cài đủ |
 | Đường dẫn datafile của tablespace phụ thuộc cách cài Oracle | Lấy từ cấu hình, mặc định theo container Oracle 26ai Free chính thức |

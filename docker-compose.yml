@@ -22,7 +22,8 @@ services:
       - "${ORACLE_PORT:-1521}:1521"
     volumes:
       - oracle-data:/opt/oracle/oradata
-      - ./db/docker/setup:/opt/oracle/scripts/setup:ro
+      # Startup (not setup) hook: the Free image's prebuilt database skips setup scripts.
+      - ./db/docker/setup:/opt/oracle/scripts/startup:ro
       - ./db:/opt/erp/db:ro
       - ./sql:/opt/erp/sql:ro
       - erp-secrets:/opt/erp/secrets

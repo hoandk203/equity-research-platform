@@ -46,36 +46,119 @@ Monorepo **Nx**:
 | `sql` | DDL, trigger, package, view, phân quyền, audit, tối ưu |
 | `docs`, `design` | Tài liệu thiết kế, ERD |
 
-## Chạy bằng Docker Compose
+## Bắt đầu
 
-Yêu cầu: Docker có Compose, khoảng 15 GB trống cho image Oracle, quyền tải image từ `container-registry.oracle.com`.
+Có ba cách chạy. Dev mới nên dùng **cách B**: Oracle chạy trong Docker, còn API và web chạy trên máy để sửa code thấy ngay.
+
+| Cách | Oracle | API + web | Khi nào dùng |
+|---|---|---|---|
+| A. Docker Compose toàn bộ | Docker | Docker | Xem demo, không sửa code |
+| B. Oracle Docker + code local | Docker | `npm` trên máy | **Phát triển hằng ngày** |
+| C. Oracle có sẵn | container của bạn | `npm` trên máy | Đã có Oracle 26ai Free đang chạy |
+
+### Yêu cầu
+
+- **Docker** có Compose v2 (`docker compose version`). Trên Linux, user phải chạy được `docker` không cần `sudo`.
+- **Node.js 24** (`node -v`) và npm. Chỉ cần cho cách B và C.
+- Khoảng **20 GB trống**: image Oracle 13,8 GB, dữ liệu database khoảng 4,3 GB, image API và web khoảng 0,8 GB.
+- Mạng tải được image từ `container-registry.oracle.com`. Image Free công khai, không cần đăng nhập.
+- Cổng trống: **1521** (Oracle), **4000** (API), **3000** (web). Nếu bị chiếm thì đổi trong `.env`, xem [Cấu hình `.env`](#cấu-hình-env).
+
+### Cấu hình `.env`
 
 ```bash
-cp .env.example .env          # đặt ORACLE_PWD
-docker compose up -d          # lần đầu: tạo database + cài schema, mất vài phút
-docker compose logs -f oracle # chờ "[db:install] done"
+cp .env.example .env
 ```
+
+| Biến | Ý nghĩa |
+|---|---|
+| `ORACLE_PWD` | **Bắt buộc.** Mật khẩu SYS/SYSTEM của container Oracle: ít nhất 8 ký tự, có chữ hoa, chữ thường và số, ví dụ `Erp2026Dev`. Chỉ dùng cho quản trị; ứng dụng dùng các tài khoản riêng do bộ cài sinh ngẫu nhiên |
+| `ORACLE_PORT` | Cổng Oracle trên máy (mặc định 1521) |
+| `API_PORT`, `WEB_PORT` | Cổng API và web khi chạy bằng Docker (mặc định 4000, 3000). Chỉ ảnh hưởng cách A |
+
+`.env` đã nằm trong `.gitignore`, không commit.
+
+### Cách A: Docker Compose toàn bộ
+
+```bash
+docker compose up -d --build
+docker compose logs -f oracle      # chờ dòng "[db:install] done", rồi Ctrl+C
+```
+
+Lần đầu mất khoảng 5–10 phút: build image API và web, khởi động Oracle, rồi cài schema, seed dữ liệu và tự kiểm tra (132 dòng báo cáo, 72 chỉ số, 2.991 phiên giá…). Trong lúc đó container `api` sẽ khởi động lại vài lần; điều này là bình thường, vì API chờ bộ cài ghi xong mật khẩu.
 
 Sau đó mở:
 - Giao diện: http://localhost:3000
 - Tài liệu API: http://localhost:4000/api/docs
+- Kiểm tra nhanh: `curl localhost:4000/api/health` trả về `"status":"ok"` và `"user":"ERP_APP"`
 
-Lần chạy đầu, container Oracle tự chạy `db/install.sh`. Mật khẩu các tài khoản dịch vụ được sinh ngẫu nhiên và chia sẻ cho API qua một volume riêng.
+Nếu đổi `API_PORT`/`WEB_PORT` thì thay số cổng trong các địa chỉ trên.
 
-## Chạy khi phát triển (Oracle có sẵn)
+### Cách B: Oracle trong Docker, API và web trên máy
 
-Yêu cầu: Node.js 24, một container Oracle AI Database 26ai Free đang chạy (mặc định tên `oracle-free`, PDB `FREEPDB1`).
+```bash
+npm ci                             # cài thư viện (lần đầu, hoặc khi package-lock.json đổi)
+docker compose up -d oracle        # chỉ bật Oracle
+docker compose logs -f oracle      # chờ "[db:install] done", rồi Ctrl+C
+npm run db:env                     # lấy mật khẩu từ Docker -> apps/api/.env và .local/db-accounts.env
+```
+
+Rồi mở hai terminal:
+
+```bash
+npm run start:api                  # http://localhost:4000/api  (Swagger: /api/docs)
+npm run start:web                  # http://localhost:3000
+```
+
+`npm run db:env` chép thông tin đăng nhập mà bộ cài ghi trong volume Docker ra máy, đổi địa chỉ thành `localhost:<ORACLE_PORT>`. Nếu `apps/api/.env` đã có (ví dụ từ một database khác), lệnh dừng lại; chạy `FORCE=1 npm run db:env` để ghi đè.
+
+Cách này không cần `npm run db:install`: Oracle trong Docker tự cài schema ở lần bật đầu.
+
+### Cách C: dùng Oracle có sẵn
+
+Dành cho khi bạn đã có một container Oracle AI Database 26ai Free **chưa có** schema `ERP_DESIGN_V1` (mặc định tên `oracle-free`, PDB `FREEPDB1`, cổng 1521).
 
 ```bash
 npm ci
-npm run db:install            # dựng schema ERP_DESIGN_V1, nạp seed, kiểm tra, ghi apps/api/.env
-npm run start:api             # http://localhost:4000/api  (Swagger: /api/docs)
-npm run start:web             # http://localhost:3000
+npm run db:install                 # dựng schema, nạp seed, kiểm tra, ghi apps/api/.env
+npm run start:api
+npm run start:web
 ```
 
-`npm run db:install` dành cho database **chưa có** schema; nếu `ERP_DESIGN_V1` đã tồn tại (đã cài trước đó), lệnh dừng lại có chủ ý. Khi đó chỉ cần `npm run db:verify` để kiểm tra dữ liệu, rồi chạy API bằng `apps/api/.env` có sẵn.
+Tên container khác thì thêm `ORACLE_CONTAINER=<tên>` trước lệnh. Bộ cài **không bao giờ sửa schema đã tồn tại**: nếu `ERP_DESIGN_V1` đã có, nó dừng lại. Khi đó dùng lại `apps/api/.env` từ lần cài trước và chạy `npm run db:verify` để kiểm tra. Các biến khác: `ERP_OWNER`, `ERP_APP_USER`, `ERP_TABLESPACE`, `ERP_WITH_AUDIT`… (đầu file `db/install.sh`). Bộ cài ghi mật khẩu vào `apps/api/.env` và `.local/db-accounts.env` (quyền 600, không commit).
 
-`db/install.sh` cấu hình được qua biến môi trường: `ORACLE_CONTAINER`, `ERP_OWNER`, `ERP_APP_USER`, `ERP_TABLESPACE`, `ERP_WITH_AUDIT`… Bộ cài **không bao giờ sửa schema đã tồn tại**: nếu owner đã có, nó dừng lại. Nó in kết quả đối chiếu (132 dòng, 9 hiệu chỉnh, 12 bộ báo cáo, 72 chỉ số, 171 đầu vào, khớp từng giá trị) và ghi mật khẩu vào `apps/api/.env` cùng `.local/db-accounts.env` (quyền 600, không commit).
+### Vận hành hằng ngày
+
+```bash
+docker compose up -d               # bật lại (dữ liệu còn nguyên, không cài lại)
+docker compose ps                  # trạng thái; oracle phải "healthy"
+docker compose stop                # tắt, giữ container
+docker compose down                # xoá container, giữ dữ liệu trong volume
+docker compose down -v             # xoá cả dữ liệu; lần bật sau cài lại từ đầu
+docker compose up -d --build api web   # build lại API/web sau khi sửa code (cách A)
+```
+
+Sau `down -v` ở cách B, chạy lại `FORCE=1 npm run db:env`, vì mật khẩu được sinh mới.
+
+Kiểm tra lại dữ liệu trong Oracle của Compose:
+
+```bash
+ORACLE_CONTAINER=equity-research-platform-oracle-1 npm run db:verify
+```
+
+Mở SQL*Plus với quyền quản trị: `docker compose exec oracle sqlplus / as sysdba`. Mật khẩu các tài khoản dịch vụ (`ERP_APP`, `ERP_ETL`) nằm trong `.local/db-accounts.env` sau khi chạy `db:env`.
+
+### Xử lý sự cố
+
+| Hiện tượng | Nguyên nhân và cách xử lý |
+|---|---|
+| `api` khởi động lại liên tục | Bộ cài chưa xong. Xem `docker compose logs oracle \| grep db:install`. Nếu có `ERROR`, xem lỗi, rồi `docker compose down -v` và bật lại |
+| `oracle` mãi chưa `healthy` | Lần đầu cần vài phút. Kiểm tra dung lượng đĩa (`df -h`) và RAM (Oracle cần khoảng 2 GB) |
+| `port is already allocated` / `address already in use` | Cổng đã có tiến trình khác dùng (một Oracle khác, `npm run start:*` đang chạy). Tắt tiến trình đó, hoặc đổi `ORACLE_PORT`/`API_PORT`/`WEB_PORT` trong `.env` |
+| `npm run db:install` báo owner đã tồn tại | Schema đã cài. Không cần cài lại; dùng `npm run db:verify` |
+| API báo `ORA-12541` / không kết nối được | Oracle chưa chạy, hoặc `ORACLE_CONNECT_STRING` trong `apps/api/.env` sai cổng. Ở cách B chạy lại `FORCE=1 npm run db:env` |
+| `ORA-01017` (sai mật khẩu) | `apps/api/.env` là của database khác hoặc của lần cài trước `down -v`. Chạy lại `FORCE=1 npm run db:env` |
+| Web hiện lỗi mạng/CORS | API chưa chạy, hoặc web không gọi đúng cổng API. Khi chạy local, đặt `NEXT_PUBLIC_API_URL=http://localhost:<cổng>/api` nếu API không ở cổng 4000 |
 
 ## Kiểm thử
 

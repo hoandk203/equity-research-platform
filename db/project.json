@@ -22,6 +22,14 @@
         "cwd": "{workspaceRoot}"
       },
       "cache": false
+    },
+    "env": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash db/docker/export-env.sh",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
     }
   }
 }

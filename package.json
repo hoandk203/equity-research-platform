@@ -87,6 +87,7 @@
   "scripts": {
     "db:install": "nx run db:install",
     "db:verify": "nx run db:verify",
+    "db:env": "nx run db:env",
     "build": "nx run-many -t build -p api web",
     "start:api": "nx run api:serve",
     "start:web": "nx run web:dev",

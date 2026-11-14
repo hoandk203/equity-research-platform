@@ -2,8 +2,9 @@
 # One-command database installer for Oracle AI Database 26ai Free.
 #
 #   tablespace + owner schema -> sql/ objects -> roles and service accounts (random
-#   passwords) -> seed through the real packages -> verify 72 metrics -> optional audit
-#   -> write apps/api/.env
+#   passwords) -> seed through the real packages (financial pilot, then market data:
+#   capital items, share counts, daily prices) -> verify 72 metrics and 273 market/valuation
+#   reference values -> optional audit -> write apps/api/.env
 #
 # Runs SQL*Plus as SYSDBA either through `docker exec` into a running container
 # (ERP_SQLPLUS=docker, default) or directly inside the Oracle container
@@ -105,14 +106,15 @@ BEGIN
 END;
 /
 CREATE USER $ERP_OWNER NO AUTHENTICATION DEFAULT TABLESPACE $ERP_TABLESPACE QUOTA $ERP_OWNER_QUOTA ON $ERP_TABLESPACE;
-GRANT CREATE TABLE, CREATE TRIGGER, CREATE PROCEDURE, CREATE VIEW TO $ERP_OWNER;
+GRANT CREATE TABLE, CREATE TRIGGER, CREATE PROCEDURE, CREATE VIEW, CREATE MATERIALIZED VIEW TO $ERP_OWNER;
 SQL
 log "  ok owner $ERP_OWNER"
 
 log "2/7 schema objects"
 for f in 001_schema.sql 002_integrity_guards.sql 005_financial_import.sql 006_metric_calculation.sql \
          007_metric_guard_hardening.sql 008_read_views.sql 017_performance_tuning.sql 009_etl_api.sql \
-         018_app_read_api.sql 019_metric_catalog.sql; do
+         018_app_read_api.sql 019_metric_catalog.sql \
+         020_market_schema.sql 021_market_import.sql 022_market_views.sql 023_screening_v2.sql; do
   run_file owner "$SQL_DIR/$f"
 done
 errors="$(scalar "SELECT COUNT(*) FROM dba_errors WHERE owner = '$ERP_OWNER'")"
@@ -137,9 +139,13 @@ log "  ok $ERP_APP_USER ($ERP_APP_ROLE), $ERP_ETL_USER ($ERP_ETL_ROLE)"
 
 log "4/7 seed: 3 companies, 132 reviewed values through pkg_financial_import, 9 metric runs"
 run_file owner "$SEED_DIR/pilot_seed.sql"
+log "    market data: 36 capital items, 39 share counts, 2,991 sessions through pkg_market_import"
+run_file owner "$SEED_DIR/market_seed.sql"
 
 log "5/7 verify against the verified pilot"
 verify_out="$(run_sql owner <"$SEED_DIR/verify.sql")" || die "verification failed"
+grep '^OK ' <<<"$verify_out" | sed 's/^/[db:install]   /'
+verify_out="$(run_sql owner <"$SEED_DIR/market_verify.sql")" || die "market verification failed"
 grep '^OK ' <<<"$verify_out" | sed 's/^/[db:install]   /'
 
 log "6/7 audit and monitoring"

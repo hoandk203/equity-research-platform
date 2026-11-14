@@ -7,9 +7,10 @@ import { ReportsModule } from '../reports/reports.module';
 import { MetricsModule } from '../metrics/metrics.module';
 import { ScreeningModule } from '../screening/screening.module';
 import { ImportsModule } from '../imports/imports.module';
+import { MarketModule } from '../market/market.module';
 
 @Module({
-  imports: [DatabaseModule, HealthModule, CompaniesModule, ReportsModule, MetricsModule, ScreeningModule, ImportsModule],
+  imports: [DatabaseModule, HealthModule, CompaniesModule, ReportsModule, MetricsModule, ScreeningModule, ImportsModule, MarketModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

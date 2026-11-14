@@ -4,8 +4,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { SEARCH_MAX_LENGTH } from '@erp/contracts';
 import { useCompanies } from '../../lib/queries';
+import { formatDate, formatPercent, formatPrice } from '../../lib/format';
 import { CompareButton } from '../compare-button';
-import { Empty, ErrorBox, Loading, PageTitle } from '../ui';
+import { Empty, ErrorBox, Loading, Money, MoneyUnit, PageTitle } from '../ui';
 
 /** S1 — company list with accent-insensitive search (FR-01). The query lives in ?q=. */
 export function CompaniesScreen() {
@@ -57,6 +58,11 @@ export function CompaniesScreen() {
                 <th>Mã</th>
                 <th>Tên doanh nghiệp</th>
                 <th>Sàn</th>
+                <th className="right">Giá đóng cửa</th>
+                <th className="right">Thay đổi</th>
+                <th className="right">
+                  Vốn hóa (<MoneyUnit />)
+                </th>
                 <th>Năm có báo cáo</th>
                 <th aria-label="Thao tác" />
               </tr>
@@ -73,6 +79,14 @@ export function CompaniesScreen() {
                     <Link href={`/doanh-nghiep/${c.symbol}`}>{c.companyName}</Link>
                   </td>
                   <td>{c.exchange}</td>
+                  <td className="right">
+                    <span className="num">{formatPrice(c.quote?.close)}</span>
+                    {c.quote ? <div className="muted small">{formatDate(c.quote.tradingDate)}</div> : null}
+                  </td>
+                  <td className={`right num ${c.quote?.change1d == null ? 'muted' : c.quote.change1d >= 0 ? 'up' : 'down'}`}>{formatPercent(c.quote?.change1d, true)}</td>
+                  <td className="right">
+                    <Money vnd={c.quote?.marketCap ?? null} />
+                  </td>
                   <td className="num">{c.years.length ? c.years.join(', ') : '—'}</td>
                   <td className="right">
                     <CompareButton symbol={c.symbol} />

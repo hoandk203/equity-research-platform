@@ -1,0 +1,961 @@
+{
+  "raw_run_id": "20261108T024848Z",
+  "primary_source": "VNDIRECT finfo stock_prices (imported)",
+  "second_source": "CAFEF price history (not imported)",
+  "third_source": "SSI chart history: adjudicates every VNDirect/CafeF disagreement and confirms sessions missing from CafeF (not imported)",
+  "rules": [
+    "Unadjusted OHLC and order-matching volume must equal CafeF exactly; otherwise SSI decides.",
+    "SSI adjusted prices are rescaled to unadjusted with the factor seen on fields where VNDirect and CafeF agree; the candidate within 0.06% of that value and on a valid HOSE tick wins.",
+    "A corrected VNDirect field keeps VNDirect adjustment factor for its adjusted twin; every correction is listed in price_corrections.csv and imported as lineage.",
+    "Adjusted close may differ from CafeF by more than 0.5% only on sessions where CafeF unadjusted data itself diverged."
+  ],
+  "prices": [
+    {
+      "symbol": "FPT",
+      "primary_sessions": 997,
+      "cafef_sessions": 996,
+      "ssi_sessions": 997,
+      "compared_with_cafef": 996,
+      "only_primary_confirmed_by_ssi": [
+        "2025-02-03"
+      ],
+      "cafef_divergences_primary_kept": [
+        {
+          "symbol": "FPT",
+          "trading_date": "2022-01-19",
+          "field": "close",
+          "primary": 88.3,
+          "second": 88.4,
+          "implied": 88.30151932554199,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2022-01-19",
+          "field": "volume",
+          "primary": 744900,
+          "second": 649300,
+          "implied": 744900,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2022-01-20",
+          "field": "close",
+          "primary": 88.8,
+          "second": 90.9,
+          "implied": 88.80124862195518,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2022-01-20",
+          "field": "volume",
+          "primary": 1334600,
+          "second": 767900,
+          "implied": 1334600,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2024-03-06",
+          "field": "low",
+          "primary": 108.4,
+          "second": 108.7,
+          "implied": 108.401932466573,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2024-03-06",
+          "field": "close",
+          "primary": 109.1,
+          "second": 109,
+          "implied": 109.10287271024215,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "FPT",
+          "trading_date": "2024-03-06",
+          "field": "volume",
+          "primary": 3702600,
+          "second": 2491100,
+          "implied": 3702600,
+          "decision": "KEEP_PRIMARY"
+        }
+      ],
+      "primary_corrected": [
+        "2025-07-18 close 126.03 -> 126"
+      ],
+      "adjusted_max_relative_diff": 0.023553862140630367,
+      "adjusted_over_tolerance_explained": [
+        {
+          "date": "2022-01-20",
+          "primary": 40.418,
+          "second": 41.37,
+          "relative": 0.023553862140630367
+        }
+      ]
+    },
+    {
+      "symbol": "HPG",
+      "primary_sessions": 997,
+      "cafef_sessions": 996,
+      "ssi_sessions": 997,
+      "compared_with_cafef": 996,
+      "only_primary_confirmed_by_ssi": [
+        "2025-02-03"
+      ],
+      "cafef_divergences_primary_kept": [
+        {
+          "symbol": "HPG",
+          "trading_date": "2022-01-19",
+          "field": "close",
+          "primary": 43.5,
+          "second": 43.55,
+          "implied": 43.49499950002933,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2022-01-19",
+          "field": "volume",
+          "primary": 17705400,
+          "second": 13682800,
+          "implied": 17705400,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2022-01-20",
+          "field": "high",
+          "primary": 44.2,
+          "second": 44.05,
+          "implied": 44.194977055569005,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2022-01-20",
+          "field": "volume",
+          "primary": 14665400,
+          "second": 10346900,
+          "implied": 14665400,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2024-03-06",
+          "field": "low",
+          "primary": 30.5,
+          "second": 30.55,
+          "implied": 30.503982880017944,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2024-03-06",
+          "field": "close",
+          "primary": 30.8,
+          "second": 30.6,
+          "implied": 30.799707386852823,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "HPG",
+          "trading_date": "2024-03-06",
+          "field": "volume",
+          "primary": 28059400,
+          "second": 20347800,
+          "implied": 28059400,
+          "decision": "KEEP_PRIMARY"
+        }
+      ],
+      "primary_corrected": [],
+      "adjusted_max_relative_diff": 0.006721075372059387,
+      "adjusted_over_tolerance_explained": [
+        {
+          "date": "2024-03-06",
+          "primary": 20.83,
+          "second": 20.69,
+          "relative": 0.006721075372059387
+        }
+      ]
+    },
+    {
+      "symbol": "VNM",
+      "primary_sessions": 997,
+      "cafef_sessions": 995,
+      "ssi_sessions": 997,
+      "compared_with_cafef": 995,
+      "only_primary_confirmed_by_ssi": [
+        "2025-02-03",
+        "2025-08-14"
+      ],
+      "cafef_divergences_primary_kept": [
+        {
+          "symbol": "VNM",
+          "trading_date": "2022-01-19",
+          "field": "close",
+          "primary": 83.4,
+          "second": 82.8,
+          "implied": 83.39638069225937,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2022-01-19",
+          "field": "volume",
+          "primary": 1764900,
+          "second": 1309600,
+          "implied": 1764900,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2022-01-20",
+          "field": "high",
+          "primary": 83.3,
+          "second": 83.2,
+          "implied": 83.30656252661686,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2022-01-20",
+          "field": "close",
+          "primary": 83,
+          "second": 83.1,
+          "implied": 82.99537847982484,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2022-01-20",
+          "field": "volume",
+          "primary": 1488400,
+          "second": 736700,
+          "implied": 1488400,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2024-03-06",
+          "field": "low",
+          "primary": 71.8,
+          "second": 72,
+          "implied": 71.79753554399636,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2024-03-06",
+          "field": "close",
+          "primary": 71.8,
+          "second": 72.1,
+          "implied": 71.79753554399636,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2024-03-06",
+          "field": "volume",
+          "primary": 4833900,
+          "second": 3403000,
+          "implied": 4833900,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2025-05-05",
+          "field": "open",
+          "primary": 57.5,
+          "second": 57.1,
+          "implied": 57.49527490308116,
+          "decision": "KEEP_PRIMARY"
+        },
+        {
+          "symbol": "VNM",
+          "trading_date": "2025-05-08",
+          "field": "open",
+          "primary": 57.2,
+          "second": 57.3,
+          "implied": 57.20544568880136,
+          "decision": "KEEP_PRIMARY"
+        }
+      ],
+      "primary_corrected": [
+        "2025-05-13 close 56.5 -> 58.5",
+        "2025-10-15 close 63.65 -> 63.6"
+      ],
+      "adjusted_max_relative_diff": 0.006688442992689482,
+      "adjusted_over_tolerance_explained": [
+        {
+          "date": "2022-01-19",
+          "primary": 64.29,
+          "second": 63.86,
+          "relative": 0.006688442992689482
+        },
+        {
+          "date": "2024-03-06",
+          "primary": 60.637,
+          "second": 60.97,
+          "relative": 0.005491696488942368
+        }
+      ]
+    }
+  ],
+  "ssi_files": [
+    {
+      "path": "ssi/prices_FPT.json",
+      "sha256": "295a4543ca0ce9bc4ea283fd0c43ff7bb6d74530d7ab01dca888d46844055ecb",
+      "url": "https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=FPT&from=1640995200&to=1767225599"
+    },
+    {
+      "path": "ssi/prices_HPG.json",
+      "sha256": "05d8635a3d12562e42488e580f19d0540ca4620ce33723f1b9ec32b2b9709fc3",
+      "url": "https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=HPG&from=1640995200&to=1767225599"
+    },
+    {
+      "path": "ssi/prices_VNM.json",
+      "sha256": "1ebaa94c62d27352ffc2ea55ed9d3228618659bf9f032ffbddbdbd7c474201a2",
+      "url": "https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=VNM&from=1640995200&to=1767225599"
+    }
+  ],
+  "cafef_files": [
+    {
+      "path": "cafef/FPT/2022_p01.json",
+      "sha256": "014cccd6f264f57cdeaf927b83fcb3bb10c33bf923424a71fdc619cb22c00c2e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p02.json",
+      "sha256": "ec18fb818d5ce2580bcae17d835d7f2a264f24876bf39ba6a377317540e316ca",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p03.json",
+      "sha256": "5729186140fb8de3a5c30413e4b618b2a26d7e28201370c2eaa904fffefdf3e0",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p04.json",
+      "sha256": "3bbcd9d8ed8c6125c2a21be185454c692919e4959aed621cbea07bd35c95385e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p05.json",
+      "sha256": "f128f76eebb5ff8bfdcfbcb99d24857714acc347af12a06cbb2ae24390c92fdd",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p06.json",
+      "sha256": "3092945154c3ff13c38656c53e3332976ee67546a074ba2e5f8ee1b91e002d91",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p07.json",
+      "sha256": "e1771d7f8a1ee99306a84351fcf943b11d83331e92b505f6c052ae60b670c9bd",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p08.json",
+      "sha256": "df8f905285100749af726b9c71283bda4d2e31a7f1d8e3f410999dd3990d400d",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2022_p09.json",
+      "sha256": "71e3f0083a4fbcdeac963dc5807a1477ea0b1d057c670b2f84c0e7f610fd5f2f",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p01.json",
+      "sha256": "02779e684173e908fb945ec21c2cb9d7d7d01326073b4142f025c364044b0356",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p02.json",
+      "sha256": "dbeb111a1b56991fabc2f1ebb20416a698451ffa35adfe84609b9d532ff9998f",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p03.json",
+      "sha256": "e14f11fea3cafe9f33b35b041340db8bedd56dfcd6cc57678ced64c46a59e180",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p04.json",
+      "sha256": "a5d1141916f209c9c9fe50966e3183abf02bbd6582b31d25e0137e54ac3b0340",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p05.json",
+      "sha256": "d6289d93d3b53641c0aa22e3d534dbaaf6e7536407628c2b1e0eb544f6c43d88",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p06.json",
+      "sha256": "599a44e605a67ac31bcaccd0444976a5a2fd72fab4044d815ddba3ecec330dbc",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p07.json",
+      "sha256": "bbaf45106cbf3d6f70bdb2e0f799fdad18433cfb85d73ff92c4ec72c8533b219",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p08.json",
+      "sha256": "14afd058c551becdbd0fb391e28b2100cfde22df0cc508130796246e3747c6c6",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2023_p09.json",
+      "sha256": "7ffd9a57f8ce1fb52ed8e8cba3268c0b40519cd24633cb92624a4872da09515b",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p01.json",
+      "sha256": "770267cfef6f68463b3618a1cb17d135ae38e9de5e53d4b44fe67f78ad0f5ed8",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p02.json",
+      "sha256": "da50a7df8d4e26d8916cd01356da9061782e3497df900eb55557cb5025d01851",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p03.json",
+      "sha256": "87e2ddf9f678482a72672cfaa0b8b4c8c03e99142d481d56f059deb8e567defa",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p04.json",
+      "sha256": "2b8874f6a65ef296ca11bd22ff67397430856758bf15b1990c24ee88162a4936",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p05.json",
+      "sha256": "25553f8d816945129c82b9a054faf9fbc825951ac3f12ece9aefc653471ccb50",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p06.json",
+      "sha256": "acce7b384f64b8e12d3ee3db8e743910f0a47e11dc34f51db9d15a01866d7b78",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p07.json",
+      "sha256": "3ef272785e1bc6fbc404dcd407405de81230b582d55bfa1097574d758e4f107b",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p08.json",
+      "sha256": "8281395aa745b5c54645ca03b4eba5a479a23954b24b74c45ca06c31ec2218a1",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2024_p09.json",
+      "sha256": "eb93b4539de03afe932433c76f330320525b6b98174ec80c0991662c65a5d518",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p01.json",
+      "sha256": "ddc6901cb8bc4c7bc1174c4ec43fbc44b54053e64dbd367438ff626606338887",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p02.json",
+      "sha256": "6b7172bfc5d381929c21bb5c7aa2303c9238bc71c2dd8d4710c08c0f374dd2c3",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p03.json",
+      "sha256": "0546d8797858fec86d026332639d57c7f30521ace274e3d3cbfbfc1770fdf118",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p04.json",
+      "sha256": "e6e6c9e85ddcb7313aa89283fa0bcb48f20f9853de49f8946c00465ff8d5874f",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p05.json",
+      "sha256": "b60f772ea4bca5174da8b45a8310c4f92529fd786945bcbe634c5b4682758ca6",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p06.json",
+      "sha256": "3c8d7f254a10bdabeac8532385e68b08d2cf00ec3dfd7349c4c5ce5efe98f539",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p07.json",
+      "sha256": "33995a18fa8b0202c17eaa61e46798c55c172c9c87425efc05be85fe6d45e188",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p08.json",
+      "sha256": "aa0bac20fdfd399295d3b28956f766294f21bfb81c62f586f7ed584b86ea4822",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/FPT/2025_p09.json",
+      "sha256": "17b277c927aad27278ae256f36cc300f32f76e44efb3ca739a7fb211ae2ccdfb",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=FPT&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p01.json",
+      "sha256": "7a84ffb23c8f82285df1214305888b71c9bf3a797426d2855043c2875cc08db3",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p02.json",
+      "sha256": "03aa52a8f71c1b3dec95e6cecd09d434f8133c8b62523e2981e3b1c43dadd7dc",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p03.json",
+      "sha256": "885feb6fe1b0fdef176c86d207b1678ec47a23a52f94089987cba5a7b1c59343",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p04.json",
+      "sha256": "eac522437a8ad4ebb384490633cad5fb065e6e8b195d5d0bce27ee078c83ac19",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p05.json",
+      "sha256": "6e65b6974e1aa1dee149e89a446f688bc0c0fec4e27e0d4f767105d78e94e344",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p06.json",
+      "sha256": "2355e425f302318a7d0434d63ba5aa95d4e92821fd401bd82d5a444a29eceb51",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p07.json",
+      "sha256": "907d128443b6b9fcacdeb641aaf00bdd7100c022bfd3e86fe517aa7f994c7026",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p08.json",
+      "sha256": "8460e50a4dc83492a50e10328995bda295a779d0c0297fabbaf32605d4e74425",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2022_p09.json",
+      "sha256": "5f298f1acd5b2eeb518bf1739fddb4f8df1ba0f426c3f70001e95ee55113bd9d",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p01.json",
+      "sha256": "e3c3e7a09266128651ed7ddfc527ecf330b89344c791deda60771591da4b52be",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p02.json",
+      "sha256": "c7efaac3c488f19efc2b0e31f7fa96ed6bb6978c54589b3dfa5e5a8be3885b72",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p03.json",
+      "sha256": "5ce2fef453c4423eabf0229773b9a8e635226eea4869634912b02c4643952466",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p04.json",
+      "sha256": "f8d352100f9004c45c048769e57fbb6f58d8fa0d2337bc1aa8c47f3c02aa7ca7",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p05.json",
+      "sha256": "36739b59dff530b6384434a50a4fb97772280aaa6cf5d6dfd1210b7e750baaeb",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p06.json",
+      "sha256": "6b137552fecfc0800bf3d567d8b717d153af4a2213511d81036378732b070eea",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p07.json",
+      "sha256": "2c1930eaa8e82cf2131daaf870a26dda4c955733e37a0223c296ef99d7f02d73",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p08.json",
+      "sha256": "297f68f90e451252b3b679cbdb98249ad7393d01897f8a4882bfb91ec0d18f0c",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2023_p09.json",
+      "sha256": "09fecdae1d9a8156004726202a81d704dc5a072b7a4f48945d8969b8bba6718f",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p01.json",
+      "sha256": "913bc99b2cf98e1c3f18ae4b782c638cd6238339756e44d93740885c8a4ed11e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p02.json",
+      "sha256": "1e2c240c116d9ec1a44928f30278cc80ccbd48210abf0f27aee9773fb922158c",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p03.json",
+      "sha256": "f21527693be89705975aef0f97c15c8148b7291e892653235782d6a62b67f48b",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p04.json",
+      "sha256": "a29fe2cf0568a1fa232386d41cdbab29263b0e02ebb30a4c838959fc4c51b2d3",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p05.json",
+      "sha256": "b21f333cae5a001bc89739a16c5ecb0952a2b3f8b65357a863cea82baf367453",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p06.json",
+      "sha256": "745bf831a111ace722483f954ab92bbee1317c8abd0a870a2210ac9499d8fc94",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p07.json",
+      "sha256": "528308c5bf0b3d5911a2164475fbd580a902b86e51574cdb88279bb5395aa085",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p08.json",
+      "sha256": "b49d084606e0415058e2ed280630c6aa629c6a730ad9c060a693c648f4719e48",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2024_p09.json",
+      "sha256": "6a051b1995538effb5b49a81570a2171c9e04d27492e9135417b70643f02f8a1",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p01.json",
+      "sha256": "f46fe6e44ceec15246ab3b274c3370a8c092f6a6dc4819aa1f71866fe79fe637",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p02.json",
+      "sha256": "2138e730e28df9c538d00582de28bddbb2589858ece52e76cde78298db2be69a",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p03.json",
+      "sha256": "acae02ca9ca9fd38fe89dd1a08ac67342609294ba21d75b1470f0ece57a1a36e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p04.json",
+      "sha256": "b466941d67babd15d664b0f91fbc070590c2012afe191b607f858b3f2ec68e78",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p05.json",
+      "sha256": "332abebb5ff776569470dec3c0591b958b903e4b50ec58e866601d47752b9d08",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p06.json",
+      "sha256": "919c4bd54baf26144a3f15d27f2d68a74d776673ef39ea8cc2d3de4a0f27b783",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p07.json",
+      "sha256": "b7e95e2ff175d2c3b2c69718d2168f951eb8d9f100f7a5385a40da652e8f59ff",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p08.json",
+      "sha256": "51581bc5e6e9d424fab55ffda55d1484bf33b8059872f35a3d1e45ec499b6ad2",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/HPG/2025_p09.json",
+      "sha256": "f27a8b4a00507802e30517c055c1650464ce88cb964fd1196e18ecb84c187640",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=HPG&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p01.json",
+      "sha256": "0839d18aa2cd471547558a87ab30c7c755ef2624c1e4837d6914a870e4bc1426",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p02.json",
+      "sha256": "9ef8c7344c8e54f7c466e9c37fefbc309008f7cba2d574cafbcecf99ba3241a1",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p03.json",
+      "sha256": "0a85f92cc763fc6f55c9251a6d326fc127dccbaa745e79fef5cd197d7d94bd76",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p04.json",
+      "sha256": "2b1e5c0b0c265e8d17a679b719edc1ec320e58aeae35b8d3d61323a85b092d3d",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p05.json",
+      "sha256": "aff7a286c539900207a7edba0fd7f50f3c6c1e0034085ffb8bb82e99ba5b128a",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p06.json",
+      "sha256": "244ada3aad1bd49195d5c3378dd5fa95ebf6b220be2a202f4df50390f8662cbe",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p07.json",
+      "sha256": "641b799acd0c6e46f14d538858af907d0d029627468f597267feef115614ea2e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p08.json",
+      "sha256": "c5878ec77c776ad02b9bbcf70f43f054241b535c5b4b5bd8a311001a0afa7940",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2022_p09.json",
+      "sha256": "61abcfd170d2969abfb66168d6969bf2c87deaea824919c19aa37242f8ae9486",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2022&EndDate=12/31/2022&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p01.json",
+      "sha256": "b52318b2e1c79afaf0273e79d93a42e2b08c36129f549d3a4598c9eb6b6b5e19",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p02.json",
+      "sha256": "b9c5b3b6e415200942f2acd63454a99ef13701062977b2831864328eca7dcd10",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p03.json",
+      "sha256": "2ab60dccc97531cc3a67b5037abb51c8e8ed378729722ffd0784f0702b7c12f7",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p04.json",
+      "sha256": "d64cf6945b1cff2cfccf638a56d89c93fbde61e89c1156092c96e21bac88af1d",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p05.json",
+      "sha256": "2424353555dba325c4ea66f350e5c544f246eabb25f3c863e69d02dcab2cdce1",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p06.json",
+      "sha256": "09c8fb70971512d83ffcf0b59cb0ce17a27fed18d740de76ba27d71e24d0c620",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p07.json",
+      "sha256": "7e696d74490add775d7e6def356e618bacce1abdadd68f8194b7ef1cf5327e69",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p08.json",
+      "sha256": "f80d338948a3ff04c6b0e44af5282f9166cbf0013e2c0a588721de191a23f4fe",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2023_p09.json",
+      "sha256": "c8c776c14238a3ea31fe2d509299383e8d8d8216084ae4756b276bbfd460ed00",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2023&EndDate=12/31/2023&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p01.json",
+      "sha256": "98569523ebcdc4779520f25b1289a28a1a7d2392a9c0c418beca30891d025b55",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p02.json",
+      "sha256": "45813752b50b6ef8872393d2c0b444d75ada84ddaccae704f6bd32f396b5826c",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p03.json",
+      "sha256": "86a44ba0d4974d68936bf4fa785140ffd47853debe8b8586ae617574407ac498",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p04.json",
+      "sha256": "849582edece3dda439fb8650e4fa432e6058985a8520ffc49e89c0613c19cb74",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p05.json",
+      "sha256": "312bbd5dbebd854ace455319e1443a444579ae6570de5da1c89003a94815c01e",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p06.json",
+      "sha256": "1e481489845c3213f833393f778665e14a1c202cd21684469b315b6d92a56570",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p07.json",
+      "sha256": "9b490a01363d7b60c73b263bb04cb00ef724bc49f7a296bf9223da45374a2ad1",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p08.json",
+      "sha256": "bf9afa1c91a999eb8b90913c342fcc759bb6262bf10b5eb3669855f94ae52091",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2024_p09.json",
+      "sha256": "067071e37ee88041a38c1a76ab5becdcac9de465dc34733ef96eb8c011d5d3b7",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2024&EndDate=12/31/2024&PageIndex=9&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p01.json",
+      "sha256": "ca188f2640b44e23c31cf4ad77c36ca3c6712063e6355b4d64e49064ac1846fd",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=1&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p02.json",
+      "sha256": "4a73fb4679a9d23d7d0cc46ac62f12b2abad2073fce8c941635a983112c1f6eb",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=2&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p03.json",
+      "sha256": "61a880895dc0951642e2b5245f1ef31fdd8e5b12dc10a9e2fd9f3d6c3928aeab",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=3&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p04.json",
+      "sha256": "e62b5b1ed5010c74436c12c3f7e7c75cb4ddd194bcb1eae50b5c2b69f91195ff",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=4&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p05.json",
+      "sha256": "92594a79157db797f2cfc5da6d4c6735a3cfe830b0d9c96c5d1ad21840f0eac8",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=5&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p06.json",
+      "sha256": "93838b93cfaabd2e388e4cefa51df04bd7c28c52da22c2794e58d48636556b55",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=6&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p07.json",
+      "sha256": "abfe13980d2750cea15136cb1671710447d438bd6c2996b85421a1a13478b580",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=7&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p08.json",
+      "sha256": "2d897cca57eaa0cb76620833f760f32961c506f275106effe33814b66f01d624",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=8&PageSize=30"
+    },
+    {
+      "path": "cafef/VNM/2025_p09.json",
+      "sha256": "f8bb25b66faeb969d229ede06b02f453f69ad10df4db700eb38eea9afb0accd4",
+      "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=VNM&StartDate=01/01/2025&EndDate=12/31/2025&PageIndex=9&PageSize=30"
+    }
+  ],
+  "shares": [
+    {
+      "symbol": "FPT",
+      "date": "2022-12-31",
+      "provider": "1097026572",
+      "implied_from_bs": "1097026572",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "FPT",
+      "date": "2023-12-31",
+      "provider": "1269968875",
+      "implied_from_bs": "1269968875",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "FPT",
+      "date": "2024-12-31",
+      "provider": "1471069183",
+      "implied_from_bs": "1471069183",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "FPT",
+      "date": "2025-12-31",
+      "provider": "1703507121",
+      "implied_from_bs": "1703507121",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "HPG",
+      "date": "2022-12-31",
+      "provider": "5814785700",
+      "implied_from_bs": "5814785700",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "HPG",
+      "date": "2023-12-31",
+      "provider": "5814785700",
+      "implied_from_bs": "5814785700",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "HPG",
+      "date": "2024-12-31",
+      "provider": "6396250200",
+      "implied_from_bs": "6396250200",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "HPG",
+      "date": "2025-12-31",
+      "provider": "7675465855",
+      "implied_from_bs": "7675465855",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "VNM",
+      "date": "2022-12-31",
+      "provider": "2089955445",
+      "implied_from_bs": "2089955445",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "VNM",
+      "date": "2023-12-31",
+      "provider": "2089955445",
+      "implied_from_bs": "2089955445",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "VNM",
+      "date": "2024-12-31",
+      "provider": "2089955445",
+      "implied_from_bs": "2089955445",
+      "check": "MATCHED_BS"
+    },
+    {
+      "symbol": "VNM",
+      "date": "2025-12-31",
+      "provider": "2089955445",
+      "implied_from_bs": "2089955445",
+      "check": "MATCHED_BS"
+    }
+  ],
+  "capital_corrections": [
+    "VNM 2025 non_controlling_interest: CafeF non_controlling_interest 0 differs from audited balance sheet 3797632379221 (page 9); issuer value used"
+  ],
+  "review_notes": [
+    "VNM 2025: CafeF reports 429 = 0 and its 400 equals equity attributable to the parent (30,685,382,906,886). The audited balance sheet (page 9) shows 429 = 3,797,632,379,221 and total equity 34,483,015,286,107, consistent with correction CORR-VNM-2025-EQUITY-FULLREVIEW of the financial seed. A correction is recorded for 429.",
+    "VNM 2022: CafeF leaves 411a = 0 while 411 = 20,899,554,450,000 and 411b = 0; the mapping takes 411 when 411a is empty and 411b is zero, so no correction is needed.",
+    "No issuer balance sheet shows a 415 (treasury shares) line for 2022-2025; FPT 2025 annual report also states 0 treasury shares."
+  ]
+}

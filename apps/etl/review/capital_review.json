@@ -1,0 +1,39 @@
+{
+  "review_version": "capital-review/1.0.0",
+  "reviewed_by": "Claude automated PDF review (text layer + rendered page images)",
+  "reviewed_at": "2026-11-08T09:45:00.000+07:00",
+  "human_approval": false,
+  "policy": "Same authorised automated-review policy as the 132 financial values (docs/07). Values below are read from the issuer's audited consolidated balance sheet; provider values come from the CafeF balance-sheet JSON already registered by the financial seed.",
+  "items": {
+    "share_capital": "Vốn góp của chủ sở hữu - cổ phiếu phổ thông có quyền biểu quyết (mã 411a). When the issuer does not split 411 (VNM), 411 is used because 411b (preferred shares) is absent/zero.",
+    "treasury_shares": "Cổ phiếu quỹ / cổ phiếu mua lại của chính mình (mã 415), at cost in VND. 0 when the line is absent.",
+    "non_controlling_interest": "Lợi ích cổ đông không kiểm soát (mã 429)."
+  },
+  "documents": {
+    "FPT-2023": { "sha256": "95c0d473dda3d16309df76448ec07600bb4827af4b511d42f80d7b8195f11838", "source_code": "FPT_IR" },
+    "FPT-2025": { "sha256": "9449a7251d126b635988974dbc72c2773c7fff39f4e5e858b5f7d3928b4e0e6c", "source_code": "FPT_IR" },
+    "HPG-2023": { "sha256": "9d91d1c9915c9206f20834aa07b3349fb774794a4b0c847dbc442ad264578f0a", "source_code": "HPG_IR" },
+    "HPG-2025": { "sha256": "f38c5f75becf7d3f145d27183eec81f119fd4f75e378b983a2763ddc3f7e0c07", "source_code": "HPG_IR" },
+    "VNM-2023": { "sha256": "7cdcebe4a0be8875288460d094b7c708b1d92a1de04e19d3949c0e4ab6c60cb1", "source_code": "VNM_IR" },
+    "VNM-2025": { "sha256": "ee996ffcb87f0699a59c20b102082666f6716fcf9be8ee314ad2de055f79c940", "source_code": "VNM_IR" }
+  },
+  "observations": [
+    { "symbol": "FPT", "year": 2022, "document": "FPT-2023", "column": "COMPARATIVE", "share_capital": "10970265720000", "share_capital_page": 149, "treasury_shares": "0", "non_controlling_interest": "4309656273198", "nci_page": 149 },
+    { "symbol": "FPT", "year": 2023, "document": "FPT-2023", "column": "CURRENT", "share_capital": "12699688750000", "share_capital_page": 149, "treasury_shares": "0", "non_controlling_interest": "4958854855687", "nci_page": 149 },
+    { "symbol": "FPT", "year": 2024, "document": "FPT-2025", "column": "COMPARATIVE", "share_capital": "14710691830000", "share_capital_page": 168, "treasury_shares": "0", "non_controlling_interest": "5933309621004", "nci_page": 168 },
+    { "symbol": "FPT", "year": 2025, "document": "FPT-2025", "column": "CURRENT", "share_capital": "17035071210000", "share_capital_page": 168, "treasury_shares": "0", "non_controlling_interest": "7265096802767", "nci_page": 168 },
+    { "symbol": "HPG", "year": 2022, "document": "HPG-2023", "column": "COMPARATIVE", "share_capital": "58147857000000", "share_capital_page": 86, "treasury_shares": "0", "non_controlling_interest": "105562146315", "nci_page": 87 },
+    { "symbol": "HPG", "year": 2023, "document": "HPG-2023", "column": "CURRENT", "share_capital": "58147857000000", "share_capital_page": 86, "treasury_shares": "0", "non_controlling_interest": "65769846491", "nci_page": 87 },
+    { "symbol": "HPG", "year": 2024, "document": "HPG-2025", "column": "COMPARATIVE", "share_capital": "63962502000000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "290990632368", "nci_page": 9 },
+    { "symbol": "HPG", "year": 2025, "document": "HPG-2025", "column": "CURRENT", "share_capital": "76754658550000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "2039012776403", "nci_page": 9 },
+    { "symbol": "VNM", "year": 2022, "document": "VNM-2023", "column": "COMPARATIVE", "share_capital": "20899554450000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "2967467051304", "nci_page": 9 },
+    { "symbol": "VNM", "year": 2023, "document": "VNM-2023", "column": "CURRENT", "share_capital": "20899554450000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "3328929059319", "nci_page": 9 },
+    { "symbol": "VNM", "year": 2024, "document": "VNM-2025", "column": "COMPARATIVE", "share_capital": "20899554450000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "3895583288658", "nci_page": 9 },
+    { "symbol": "VNM", "year": 2025, "document": "VNM-2025", "column": "CURRENT", "share_capital": "20899554450000", "share_capital_page": 9, "treasury_shares": "0", "non_controlling_interest": "3797632379221", "nci_page": 9 }
+  ],
+  "notes": [
+    "VNM 2025: CafeF reports 429 = 0 and its 400 equals equity attributable to the parent (30,685,382,906,886). The audited balance sheet (page 9) shows 429 = 3,797,632,379,221 and total equity 34,483,015,286,107, consistent with correction CORR-VNM-2025-EQUITY-FULLREVIEW of the financial seed. A correction is recorded for 429.",
+    "VNM 2022: CafeF leaves 411a = 0 while 411 = 20,899,554,450,000 and 411b = 0; the mapping takes 411 when 411a is empty and 411b is zero, so no correction is needed.",
+    "No issuer balance sheet shows a 415 (treasury shares) line for 2022-2025; FPT 2025 annual report also states 0 treasury shares."
+  ]
+}

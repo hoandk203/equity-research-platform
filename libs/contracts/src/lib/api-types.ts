@@ -1,3 +1,5 @@
+import type { CompanyQuote, CompareMarketRow } from './market-types';
+
 /**
  * Response shapes of the REST API. Money in VND is a decimal string (values reach 1e13 and
  * are stored as NUMBER(28,0)); ratios are numbers. Every nullable value means "not available"
@@ -31,6 +33,8 @@ export interface CompanySummary {
   companyName: string;
   exchange: string;
   years: number[];
+  /** Latest session close, daily change and market cap; null without price data. */
+  quote: CompanyQuote | null;
 }
 
 export interface ReportSetInfo {
@@ -173,6 +177,9 @@ export interface CompareResponse {
   year: number;
   symbols: string[];
   rows: CompareRow[];
+  /** Valuation and market rows on `date` (latest session on or before it); empty when no price data. */
+  date: string | null;
+  marketRows: CompareMarketRow[];
 }
 
 export interface ImportBatch {

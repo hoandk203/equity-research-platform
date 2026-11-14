@@ -12,6 +12,8 @@ export const MAX_YEAR = 2200;
 export const SCREENING_OPERATORS = ['>=', '>', '<=', '<', '='] as const;
 export type ScreeningOperator = (typeof SCREENING_OPERATORS)[number];
 export const MAX_SCREENING_CONDITIONS = 10;
+/** Financial (ROE) and market metric codes (RETURN_1Y, MA200): upper-case, digits, underscore. */
+export const METRIC_CODE_PATTERN = /^[A-Z][A-Z0-9_]{1,59}$/;
 
 export const MIN_COMPARE_SYMBOLS = 2;
 export const MAX_COMPARE_SYMBOLS = 3;

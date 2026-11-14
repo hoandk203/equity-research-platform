@@ -1,11 +1,16 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import type { CompareResponse, LineageResponse, MetricCatalogItem, MetricsResponse } from '@erp/contracts';
 import { CompaniesService } from '../companies/companies.service';
+import { MarketService } from '../market/market.service';
 import { CURRENT_FORMULA, MetricsRepository } from './metrics.repository';
 
 @Injectable()
 export class MetricsService {
-  constructor(private readonly repo: MetricsRepository, private readonly companies: CompaniesService) {}
+  constructor(
+    private readonly repo: MetricsRepository,
+    private readonly companies: CompaniesService,
+    private readonly market: MarketService,
+  ) {}
 
   catalog(requestId: string): Promise<MetricCatalogItem[]> {
     return this.repo.catalog(requestId);
@@ -35,7 +40,7 @@ export class MetricsService {
   }
 
   /** Same year and formula for every company; a missing or non-VALID value is UNKNOWN (no fallback). */
-  async compare(requestId: string, symbols: string[], year: number): Promise<CompareResponse> {
+  async compare(requestId: string, symbols: string[], year: number, date?: string): Promise<CompareResponse> {
     const missing: string[] = [];
     for (const s of symbols) {
       try {
@@ -47,10 +52,17 @@ export class MetricsService {
     if (missing.length) {
       throw new BadRequestException({ code: 'COMPANY_NOT_FOUND', message: `Không tìm thấy doanh nghiệp: ${missing.join(', ')}.` });
     }
-    const [catalog, values] = await Promise.all([this.currentCatalog(requestId), this.repo.compare(requestId, symbols, year)]);
+    const asOf = await this.market.asOf(requestId, date);
+    const [catalog, values, marketRows] = await Promise.all([
+      this.currentCatalog(requestId),
+      this.repo.compare(requestId, symbols, year),
+      this.market.compareRows(requestId, symbols, asOf),
+    ]);
     return {
       year,
       symbols,
+      date: asOf,
+      marketRows,
       rows: catalog.map((m) => ({
         metricCode: m.metricCode,
         metricName: m.metricName,

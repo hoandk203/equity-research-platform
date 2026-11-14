@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
       <main className="content">{children}</main>
       <footer className="footer">
-        Phân tích hồi cứu trên dữ liệu đã đối chiếu với báo cáo kiểm toán · ngày công bố báo cáo chưa xác minh · chưa có dữ liệu giá ·
+        Phân tích hồi cứu trên dữ liệu đã đối chiếu với báo cáo kiểm toán · ngày công bố báo cáo chưa xác minh · giá ngày 2022–2025 từ VNDirect, đối chiếu CafeF và SSI ·
         dữ liệu đọc từ Oracle AI Database 26ai bằng tài khoản chỉ đọc
       </footer>
     </div>

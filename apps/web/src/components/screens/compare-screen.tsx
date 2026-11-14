@@ -1,11 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
-import { DEFAULT_YEAR, MAX_COMPARE_SYMBOLS, METRIC_YEARS, MIN_COMPARE_SYMBOLS, REPORT_YEARS, SYMBOL_PATTERN } from '@erp/contracts';
+import { Fragment, useEffect, useMemo } from 'react';
+import { DATE_PATTERN, DEFAULT_YEAR, MAX_COMPARE_SYMBOLS, METRIC_YEARS, MIN_COMPARE_SYMBOLS, REPORT_YEARS, SYMBOL_PATTERN } from '@erp/contracts';
 import { useCompanies, useCompare } from '../../lib/queries';
-import { formatMetric } from '../../lib/format';
-import { METRIC_STATUS, labelOf } from '../../lib/labels';
+import { formatDate, formatMarketValue, formatMetric } from '../../lib/format';
+import { METRIC_GROUP, METRIC_STATUS, labelOf, statusLabel } from '../../lib/labels';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { compareBasket } from '../../store/slices';
 import { Badge, Empty, ErrorBox, Loading, PageTitle } from '../ui';
@@ -28,9 +28,12 @@ export function CompareScreen() {
   const selected = maParam !== null ? fromUrl : basket.slice(0, MAX_COMPARE_SYMBOLS);
   const yearParam = Number(params.get('nam'));
   const year = (REPORT_YEARS as readonly number[]).includes(yearParam) ? yearParam : DEFAULT_YEAR;
+  const dateParam = params.get('ngay');
+  const date = dateParam && DATE_PATTERN.test(dateParam) ? dateParam : null;
 
-  const go = (symbols: string[], y = year) => {
+  const go = (symbols: string[], y = year, d = date) => {
     const q = new URLSearchParams({ nam: String(y), ma: symbols.join(',') });
+    if (d) q.set('ngay', d);
     router.replace(`${pathname}?${q.toString()}`, { scroll: false });
   };
 
@@ -44,7 +47,7 @@ export function CompareScreen() {
     else if (selected.length < MAX_COMPARE_SYMBOLS) go([...selected, s]);
   };
 
-  const result = useCompare(selected, year);
+  const result = useCompare(selected, year, date);
   const tooFew = selected.length < MIN_COMPARE_SYMBOLS;
 
   return (
@@ -83,6 +86,13 @@ export function CompareScreen() {
             ))}
           </div>
           {!(METRIC_YEARS as readonly number[]).includes(year) ? <p className="muted small">Năm {year} là năm cơ sở nên không có chỉ số; mọi ô sẽ là Chưa xác định.</p> : null}
+        </div>
+        <div style={{ marginTop: '0.9rem', display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <label htmlFor="compare-date" className="muted small">
+            Ngày định giá
+          </label>
+          <input id="compare-date" type="date" value={date ?? result.data?.date ?? ''} onChange={(e) => go(selected, year, e.target.value || null)} />
+          <span className="muted small">Mặc định phiên gần nhất; mỗi mã dùng phiên gần nhất trước hoặc bằng ngày chọn.</span>
         </div>
       </div>
 
@@ -126,6 +136,57 @@ export function CompareScreen() {
             </tbody>
           </table>
         </div>
+      ) : null}
+      {result.data && result.data.marketRows.length ? (
+        <section aria-labelledby="compare-market-title" style={{ marginTop: '1.25rem' }}>
+          <h2 id="compare-market-title">Định giá và thị trường · {formatDate(result.data.date)}</h2>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Chỉ số</th>
+                  {result.data.symbols.map((s) => (
+                    <th key={s} className="right">
+                      <Link href={`/doanh-nghiep/${s}?tab=gia`}>{s}</Link>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {(['VALUATION', 'MARKET'] as const).map((g) => (
+                  <Fragment key={g}>
+                    <tr className="group">
+                      <td colSpan={result.data.symbols.length + 1}>{METRIC_GROUP[g]}</td>
+                    </tr>
+                    {result.data.marketRows
+                      .filter((r) => r.metricGroup === g)
+                      .map((row) => (
+                        <tr key={row.metricCode}>
+                          <td>
+                            {row.metricName}
+                            <div className="muted small mono">{row.metricCode}</div>
+                          </td>
+                          {row.cells.map((cell) => (
+                            <td key={cell.symbol} className="right">
+                              {cell.status === 'VALID' ? (
+                                <span className="num">{formatMarketValue(cell.value, row.displayUnit, row.metricCode)}</span>
+                              ) : (
+                                <>
+                                  <Badge label={{ text: 'Chưa xác định', tone: 'warn' }} />
+                                  <div className="muted small">{statusLabel(cell.status).text}</div>
+                                </>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="muted small">P/E, P/B dùng BCTC theo chính sách hồi cứu (BCTC năm N áp dụng từ 01/04 năm N+1); vốn hóa = giá gốc × số cổ phiếu lưu hành tại ngày.</p>
+        </section>
       ) : null}
     </>
   );

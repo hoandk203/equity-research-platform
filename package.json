@@ -73,6 +73,7 @@
     "@tanstack/react-query": "5.104.5",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
+    "lightweight-charts": "5.2.1",
     "next": "16.4.3",
     "oracledb": "26.0.0",
     "react": "19.3.1",
@@ -89,9 +90,13 @@
     "build": "nx run-many -t build -p api web",
     "start:api": "nx run api:serve",
     "start:web": "nx run web:dev",
-    "test": "nx run-many -t test -p contracts api web",
+    "test": "nx run-many -t test -p contracts api web etl",
     "test:integration": "nx run api:integration",
     "test:e2e": "nx e2e web-e2e",
-    "lint": "nx run-many -t lint"
+    "lint": "nx run-many -t lint",
+    "etl:fetch": "nx run etl:fetch",
+    "etl:build": "nx run etl:build-dataset",
+    "etl:load": "nx run etl:load",
+    "etl:export-seed": "nx run etl:export-seed"
   }
 }

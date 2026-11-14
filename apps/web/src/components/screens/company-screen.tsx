@@ -1,12 +1,15 @@
 'use client';
 import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
+import { usePathname, useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useState } from 'react';
-import { DEFAULT_YEAR, METRIC_YEARS, SYMBOL_PATTERN, type ReportLine, type StatementKind } from '@erp/contracts';
-import { useCompany, useLineage, useMetrics, useReportLines } from '../../lib/queries';
-import { formatMetric, shortHash } from '../../lib/format';
+import { DEFAULT_YEAR, METRIC_YEARS, SYMBOL_PATTERN, type MarketSnapshot, type ReportLine, type StatementKind } from '@erp/contracts';
+import { useCompany, useLineage, useMarketSnapshot, useMetrics, usePrices, useReportLines } from '../../lib/queries';
+import { formatDate, formatMetric, formatPercent, formatPrice, formatVolume, shortHash } from '../../lib/format';
 import { LINE_STATUS, METRIC_STATUS, STATEMENT, labelOf } from '../../lib/labels';
+import { MA_WINDOWS, RANGES, parseRange } from '../../lib/chart';
 import { CompareButton } from '../compare-button';
+import { PriceChart, type ChartKind } from '../price-chart';
+import { ValuationCard } from '../valuation-card';
 import { Badge, Empty, ErrorBox, Loading, Money, MoneyUnit, PageTitle } from '../ui';
 
 type Tab = 'bao-cao' | 'chi-so' | 'truy-vet' | 'gia';
@@ -57,6 +60,7 @@ export function CompanyScreen() {
           </>
         }
       />
+      <ValuationCard symbol={c.symbol} />
       <div className="card" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
         <div>
           <div className="muted small">Năm tài chính</div>
@@ -91,7 +95,7 @@ export function CompanyScreen() {
       {tab === 'bao-cao' ? <ReportTab symbol={c.symbol} year={year} /> : null}
       {tab === 'chi-so' ? <MetricsTab symbol={c.symbol} year={year} traceHref={(id) => href({ tab: 'truy-vet', ketqua: id })} /> : null}
       {tab === 'truy-vet' ? <LineageTab symbol={c.symbol} year={year} resultId={resultId} pickHref={(id) => href({ tab: 'truy-vet', ketqua: id })} /> : null}
-      {tab === 'gia' ? <PriceTab /> : null}
+      {tab === 'gia' ? <PriceTab symbol={c.symbol} /> : null}
     </>
   );
 }
@@ -360,13 +364,144 @@ function LineageTab({ symbol, year, resultId, pickHref }: { symbol: string; year
   );
 }
 
-function PriceTab() {
+/** Price tab (P-05): candles or line, volume, moving averages, range; state in ?khoang=&kieu=&gia=. */
+function PriceTab({ symbol }: { symbol: string }) {
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const range = parseRange(params.get('khoang'));
+  const kind: ChartKind = params.get('kieu') === 'duong' ? 'line' : 'candle';
+  const basis = params.get('gia') === 'goc' ? 'UNADJUSTED' : 'ADJUSTED';
+  const [ma, setMa] = useState<number[]>([20, 50]);
+  const prices = usePrices(symbol, basis);
+  const snap = useMarketSnapshot(symbol);
+  const set = (key: string, value: string) => {
+    const q = new URLSearchParams(params.toString());
+    q.set(key, value);
+    router.replace(`${pathname}?${q.toString()}`, { scroll: false });
+  };
+  const showMa = basis === 'ADJUSTED' ? ma : [];
+
   return (
-    <div className="notice notice-warn">
-      <strong>Chưa có dữ liệu giá đã nghiệm thu.</strong>
-      <p className="small" style={{ marginBottom: 0 }}>
-        Giá và khối lượng giao dịch ngày thuộc phạm vi mở rộng. Ứng dụng không hiển thị dữ liệu giá mẫu hay giả lập để tránh nhầm với giá thực.
+    <>
+      <div className="card">
+        <div className="chart-controls">
+          <div className="seg" role="group" aria-label="Khoảng thời gian">
+            {RANGES.map((r) => (
+              <button key={r.id} type="button" className={r.id === range ? 'on' : undefined} aria-pressed={r.id === range} onClick={() => set('khoang', r.id)} title={r.label}>
+                {r.id === 'TC' ? 'Tất cả' : r.id}
+              </button>
+            ))}
+          </div>
+          <div className="seg" role="group" aria-label="Kiểu biểu đồ">
+            <button type="button" className={kind === 'candle' ? 'on' : undefined} aria-pressed={kind === 'candle'} onClick={() => set('kieu', 'nen')}>
+              Nến
+            </button>
+            <button type="button" className={kind === 'line' ? 'on' : undefined} aria-pressed={kind === 'line'} onClick={() => set('kieu', 'duong')}>
+              Đường
+            </button>
+          </div>
+          <div className="seg" role="group" aria-label="Loại giá">
+            <button type="button" className={basis === 'ADJUSTED' ? 'on' : undefined} aria-pressed={basis === 'ADJUSTED'} onClick={() => set('gia', 'dc')} title="Điều chỉnh theo cổ tức, cổ phiếu thưởng">
+              Giá điều chỉnh
+            </button>
+            <button type="button" className={basis === 'UNADJUSTED' ? 'on' : undefined} aria-pressed={basis === 'UNADJUSTED'} onClick={() => set('gia', 'goc')} title="Giá khớp lệnh thực tế từng phiên">
+              Giá gốc
+            </button>
+          </div>
+          <div className="ma-toggles" role="group" aria-label="Trung bình động">
+            {MA_WINDOWS.map((w) => (
+              <label key={w} className={`ma ma-${w}`}>
+                <input type="checkbox" checked={ma.includes(w)} disabled={basis !== 'ADJUSTED'} onChange={() => setMa(ma.includes(w) ? ma.filter((x) => x !== w) : [...ma, w].sort((a, b) => a - b))} /> MA{w}
+              </label>
+            ))}
+          </div>
+        </div>
+        {prices.isLoading ? <Loading text="Đang tải chuỗi giá…" /> : null}
+        {prices.error ? <ErrorBox error={prices.error} /> : null}
+        {prices.data && prices.data.bars.length === 0 ? <Empty title="Chưa có dữ liệu giá cho mã này" /> : null}
+        {prices.data && prices.data.bars.length > 0 ? <PriceChart bars={prices.data.bars} kind={kind} range={range} maWindows={showMa} /> : null}
+        <p className="muted small" style={{ marginBottom: 0 }}>
+          Đơn vị: đồng/cổ phiếu; khối lượng khớp lệnh. {basis === 'ADJUSTED'
+            ? 'Giá điều chỉnh do nguồn công bố tại ngày tải, dùng cho lợi suất và trung bình động.'
+            : 'Giá gốc là giá khớp lệnh từng phiên (dùng cho vốn hóa); có bước nhảy ở ngày chia cổ tức, cổ phiếu thưởng nên không hiện trung bình động.'}
+        </p>
+      </div>
+      {snap.data ? <MarketStats snap={snap.data} /> : null}
+      {prices.data ? (
+        <div className="grid grid-2">
+          <div className="card">
+            <h3>Nguồn dữ liệu</h3>
+            <dl className="kv small">
+              <dt>Nguồn chính</dt>
+              <dd>{prices.data.source?.code ?? '—'} · đối chiếu với CafeF và SSI</dd>
+              <dt>Khoảng có dữ liệu</dt>
+              <dd className="num">
+                {formatDate(prices.data.firstAvailable)} → {formatDate(prices.data.lastAvailable)} · {prices.data.bars.length} phiên
+              </dd>
+              <dt>Tệp nguồn</dt>
+              <dd className="mono">
+                {shortHash(prices.data.source?.sha256)} · đợt nhập #{prices.data.source?.batchId ?? '—'}
+              </dd>
+            </dl>
+          </div>
+          <div className="card">
+            <h3>Phiên đã hiệu chỉnh ({prices.data.corrections.length})</h3>
+            {prices.data.corrections.length === 0 ? (
+              <p className="small muted" style={{ margin: 0 }}>
+                Không có: mọi giá của chuỗi này khớp nguồn đối chiếu.
+              </p>
+            ) : (
+              <ul className="small corrections">
+                {prices.data.corrections.map((c) => (
+                  <li key={`${c.date}-${c.field}`} title={`${c.reason}. ${c.evidence}`}>
+                    <strong className="num">{formatDate(c.date)}</strong> {FIELD_NAME[c.field] ?? c.field}: nguồn chính ghi{' '}
+                    <span className="num">{formatPrice(c.providerValue)}</span>, dùng <span className="num">{formatPrice(c.acceptedValue)}</span>
+                    <div className="muted">
+                      {c.basis === 'UNADJUSTED'
+                        ? 'Khác CafeF và SSI (sai bước giá hoặc ngoài biên độ ngày); giá trị nhận là giá hai nguồn đối chiếu cùng xác nhận.'
+                        : 'Tính lại từ giá gốc đã hiệu chỉnh bằng hệ số điều chỉnh của nguồn chính.'}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+const FIELD_NAME: Record<string, string> = { OPEN: 'giá mở cửa', HIGH: 'giá cao nhất', LOW: 'giá thấp nhất', CLOSE: 'giá đóng cửa', VOLUME: 'khối lượng' };
+
+function MarketStats({ snap }: { snap: MarketSnapshot }) {
+  const items: Array<[string, string, string?]> = [
+    ['Lợi suất 1 tháng', formatPercent(snap.return1m, true)],
+    ['Lợi suất 3 tháng', formatPercent(snap.return3m, true)],
+    ['Lợi suất 6 tháng', formatPercent(snap.return6m, true)],
+    ['Lợi suất 1 năm', formatPercent(snap.return1y, true)],
+    ['Biến động 1 năm', formatPercent(snap.volatility1y), 'Độ lệch chuẩn lợi suất ngày × √252'],
+    ['MA20 / MA50', `${formatPrice(snap.ma20)} / ${formatPrice(snap.ma50)}`],
+    ['MA200', formatPrice(snap.ma200)],
+    ['Cao / thấp 52 tuần', `${formatPrice(snap.high52w)} / ${formatPrice(snap.low52w)}`],
+    ['Cách đỉnh 52 tuần', formatPercent(snap.dist52wHigh, true)],
+    ['Khối lượng phiên', formatVolume(snap.volume)],
+  ];
+  return (
+    <section className="card" aria-label="Chỉ số thị trường">
+      <h3>Chỉ số thị trường · phiên {formatDate(snap.tradingDate)}</h3>
+      <div className="stats stats-wide">
+        {items.map(([label, value, title]) => (
+          <div className="stat" key={label} title={title}>
+            <span className="stat-label">{label}</span>
+            <span className="stat-value num">{value}</span>
+          </div>
+        ))}
+      </div>
+      <p className="muted small" style={{ marginBottom: 0 }}>
+        Tính trong Oracle bằng hàm phân tích trên giá điều chỉnh (lợi suất theo số phiên: 21/63/126/252); giá trị trống khi chưa đủ cửa sổ.
       </p>
-    </div>
+    </section>
   );
 }

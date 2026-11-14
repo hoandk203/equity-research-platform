@@ -29,11 +29,16 @@ export const compareBasket = createSlice({
 });
 
 export interface ScreeningDraftState {
+  mode: 'year' | 'date';
   year: number;
+  /** YYYY-MM-DD in date mode; empty means "latest session". */
+  date: string;
   conditions: DraftCondition[];
 }
 export const DEFAULT_SCREENING_DRAFT: ScreeningDraftState = {
+  mode: 'year',
   year: 2024,
+  date: '',
   conditions: [
     { metric: 'NET_MARGIN', op: '>=', value: 10 },
     { metric: 'CURRENT_RATIO', op: '>=', value: 1 },

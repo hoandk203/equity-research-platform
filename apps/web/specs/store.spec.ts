@@ -16,7 +16,7 @@ describe('redux slices', () => {
   it('remembers the screening draft between pages and can reset it', () => {
     const store = makeStore();
     expect(store.getState().screeningDraft).toEqual(DEFAULT_SCREENING_DRAFT);
-    const draft = { year: 2025, conditions: [{ metric: 'ROE', op: '>=' as const, value: 15 }] };
+    const draft = { mode: 'date' as const, year: 2025, date: '2025-06-30', conditions: [{ metric: 'PE', op: '<=' as const, value: 15 }] };
     store.dispatch(screeningDraft.actions.save(draft));
     expect(store.getState().screeningDraft).toEqual(draft);
     store.dispatch(screeningDraft.actions.reset());

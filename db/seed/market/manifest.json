@@ -1,0 +1,133 @@
+{
+  "contract": "erp-market/1.0.0",
+  "dataset_version": "market-20261108",
+  "raw_run_id": "20261108T024848Z",
+  "price_from": "2022-01-01",
+  "price_to": "2025-12-31",
+  "mappings": {
+    "prices": "vndirect-prices/1.0.0",
+    "shares": "vndirect-shares/1.0.0",
+    "capital": "capital-review/1.0.0"
+  },
+  "price_unit": "THOUSAND_VND",
+  "price_multiplier": 1000,
+  "volume": "order-matching shares (nmVolume)",
+  "adjusted_basis_note": "Adjusted series as published by VNDirect on the collection date; re-downloading after a corporate action changes it.",
+  "review": {
+    "version": "capital-review/1.0.0",
+    "reviewed_by": "Claude automated PDF review (text layer + rendered page images)",
+    "reviewed_at": "2026-11-08T09:45:00.000+07:00"
+  },
+  "capital_provider_artifacts": [
+    {
+      "symbol": "FPT",
+      "sha256": "34151ddf16ac17aeba80c41de001b85427f26bd8df5fb3d4021933fba7fa4caa",
+      "url": "https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=FPT&pageIndex=1&pageSize=50&TypeTime=NAM&reportType=ALL",
+      "path": "Hoc_Sau/data/public_financials_2026-11-05/raw/cafef/FPT/balance_1.json"
+    },
+    {
+      "symbol": "HPG",
+      "sha256": "b54be02e1d3ae5278db59befc59ab1e73938880b791831b62b47acc0a04cde19",
+      "url": "https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=HPG&pageIndex=1&pageSize=50&TypeTime=NAM&reportType=ALL",
+      "path": "Hoc_Sau/data/public_financials_2026-11-05/raw/cafef/HPG/balance_1.json"
+    },
+    {
+      "symbol": "VNM",
+      "sha256": "0be126de2732b8bf9ba1454e01a3192b87a37efa8351fc4bfbea08728cc2ef1c",
+      "url": "https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=VNM&pageIndex=1&pageSize=50&TypeTime=NAM&reportType=ALL",
+      "path": "Hoc_Sau/data/public_financials_2026-11-05/raw/cafef/VNM/balance_1.json"
+    }
+  ],
+  "artifacts": [
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "bb1f63a8a789eb948f39649bc950cbf2f6361860456fc7dae17cdc197bb0254c",
+      "path": "data/market_raw/20261108T024848Z/vndirect/prices_FPT.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/stock_prices?sort=date&q=code:FPT~date:gte:2022-01-01~date:lte:2025-12-31&size=2000&page=1",
+      "collected_at": "2026-11-08T02:48:49.808Z",
+      "symbol": "FPT",
+      "dataset": "PRICES",
+      "note": "Public market-data API; raw bytes stored locally"
+    },
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "39fd8a36397af50560349ed4753270e0021eaac54ff6e0abbe14d78aac51b866",
+      "path": "data/market_raw/20261108T024848Z/vndirect/shares_FPT.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/ratios?q=code:FPT~itemCode:51004&sort=reportDate:desc&size=100&fields=code,itemCode,reportDate,value",
+      "collected_at": "2026-11-08T02:48:50.293Z",
+      "symbol": "FPT",
+      "dataset": "SHARES",
+      "note": "Public market-data API; raw bytes stored locally"
+    },
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "61ea0042c0dd1fb25f8b24ff0e77b0c9b7c60fcc4af12fa081288ebc559c980f",
+      "path": "data/market_raw/20261108T024848Z/vndirect/prices_HPG.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/stock_prices?sort=date&q=code:HPG~date:gte:2022-01-01~date:lte:2025-12-31&size=2000&page=1",
+      "collected_at": "2026-11-08T02:49:25.341Z",
+      "symbol": "HPG",
+      "dataset": "PRICES",
+      "note": "Public market-data API; raw bytes stored locally"
+    },
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "1aa22e47cf52f6ecacb35e419c4d0fd0fc6a879233b3a650222b3dd9846defe1",
+      "path": "data/market_raw/20261108T024848Z/vndirect/shares_HPG.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/ratios?q=code:HPG~itemCode:51004&sort=reportDate:desc&size=100&fields=code,itemCode,reportDate,value",
+      "collected_at": "2026-11-08T02:49:25.831Z",
+      "symbol": "HPG",
+      "dataset": "SHARES",
+      "note": "Public market-data API; raw bytes stored locally"
+    },
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "0c480f29773a6bcdf491f81f1853fc2d1489f9eb0bcb216fb3a66c99c14873b4",
+      "path": "data/market_raw/20261108T024848Z/vndirect/prices_VNM.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/stock_prices?sort=date&q=code:VNM~date:gte:2022-01-01~date:lte:2025-12-31&size=2000&page=1",
+      "collected_at": "2026-11-08T02:50:03.831Z",
+      "symbol": "VNM",
+      "dataset": "PRICES",
+      "note": "Public market-data API; raw bytes stored locally"
+    },
+    {
+      "source_code": "VNDIRECT",
+      "source_name": "VNDirect finfo API",
+      "kind": "JSON",
+      "sha256": "f675da8be8d6e28cf2608626a81aff1b90d38660e15c55d0644cf7be9d5398bc",
+      "path": "data/market_raw/20261108T024848Z/vndirect/shares_VNM.json",
+      "url": "https://api-finfo.vndirect.com.vn/v4/ratios?q=code:VNM~itemCode:51004&sort=reportDate:desc&size=100&fields=code,itemCode,reportDate,value",
+      "collected_at": "2026-11-08T02:50:04.299Z",
+      "symbol": "VNM",
+      "dataset": "SHARES",
+      "note": "Public market-data API; raw bytes stored locally"
+    }
+  ],
+  "files": {
+    "daily_prices.csv": {
+      "sha256": "1c479af5d0d1016df4cebbb9ab8286532ef31046591a9eb43dab96ec2e86deeb",
+      "rows": 2991
+    },
+    "share_counts.csv": {
+      "sha256": "44e30caad78a14f0f745a37ed53ffab70515fc4174072a38ba007bd19b165968",
+      "rows": 39
+    },
+    "capital_facts.csv": {
+      "sha256": "336bee55aa8267ab889f9757d45131f0d7df139363f0b4403bce04a4f7e8776c",
+      "rows": 36
+    },
+    "price_corrections.csv": {
+      "sha256": "6d61885d956c32fd84f317d33ee3388e8011a203cf3308e393d48a6717ab8ecf",
+      "rows": 6
+    }
+  }
+}

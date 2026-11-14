@@ -173,9 +173,10 @@ describe(`common behaviour (${process.env['ORACLE_SCHEMA']})`, () => {
   it('publishes an OpenAPI document covering every endpoint', async () => {
     const doc = (await request(http).get('/api/docs-json').expect(200)).body as { paths: Record<string, unknown> };
     expect(Object.keys(doc.paths).sort()).toEqual([
-      '/api/companies', '/api/companies/{symbol}', '/api/companies/{symbol}/metrics', '/api/companies/{symbol}/reports',
-      '/api/compare', '/api/health', '/api/imports', '/api/imports/{batchId}/errors', '/api/metric-results/{resultId}/lineage',
-      '/api/metrics/catalog', '/api/screening',
+      '/api/companies', '/api/companies/{symbol}', '/api/companies/{symbol}/market-metrics', '/api/companies/{symbol}/metrics',
+      '/api/companies/{symbol}/prices', '/api/companies/{symbol}/reports', '/api/companies/{symbol}/valuation',
+      '/api/compare', '/api/health', '/api/imports', '/api/imports/{batchId}/errors', '/api/market/catalog',
+      '/api/metric-results/{resultId}/lineage', '/api/metrics/catalog', '/api/screening',
     ]);
   });
 });

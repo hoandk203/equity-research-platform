@@ -6,6 +6,8 @@ Ngày 07/11/2026. **Đã tạo và kiểm chứng trên Oracle thực tế trong
 
 **Trạng thái hiện hành sau calculation:** đã lưu 9 run/72 metric result VALID/171 input lineage, đối chiếu khớp chuẩn; 39 ca integration và 21 smoke checks cấu trúc chạy lại đạt. Ba guard calculation được nâng để khóa parent và bảo vệ finalize, vẫn 14 trigger; có 3 package VALID, 0 compile errors. Chi tiết [tính và lưu chỉ số](09_TINH_VA_LUU_CHI_SO_ORACLE.md). View/roles và quyền vận hành còn triển khai; mô hình bảng không đổi.
 
+**Mở rộng giai đoạn 2 (08/11/2026):** thêm 7 bảng thị trường/định giá và tạo lại `daily_prices` dạng phân vùng theo năm → **30 bảng, 49 khóa ngoại, 20 trigger, 23 view + 2 materialized view**. Sơ đồ riêng: [SVG](../design/erd_market.svg) · [PNG](../design/erd_market.png) · [Mermaid](../design/erd_market.mmd); từ điển: [05b](05_TU_DIEN_DU_LIEU_THI_TRUONG.md); lý do thiết kế: [docs/17](17_PHAN_TICH_GIA_VA_DINH_GIA.md) mục 5. Các sơ đồ dưới đây mô tả 23 bảng gốc.
+
 ## 1. Mở sơ đồ
 
 **Một bản tổng thể đủ 23 bảng, 175 cột, 35 FK:** [SVG phóng to](../design/erd_full.svg) · [PNG](../design/erd_full.png) · [PDF](../design/erd_full.pdf).

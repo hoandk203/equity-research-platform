@@ -1,4 +1,4 @@
-import type { BatchStatus, LineStatus, MetricStatus, ScreeningOperator, ScreeningOutcome, StatementKind } from '@erp/contracts';
+import type { BatchStatus, LineStatus, MetricStatus, ScreeningMetricGroup, ScreeningOperator, ScreeningOutcome, StatementKind, ValuationStatus } from '@erp/contracts';
 
 export type Tone = 'ok' | 'warn' | 'bad' | 'neutral';
 export interface Label {
@@ -16,6 +16,31 @@ export const METRIC_STATUS: Record<MetricStatus | 'NOT_AVAILABLE', Label> = {
   BLOCKED_INPUT_QUALITY: { text: 'Bị chặn do chất lượng', tone: 'bad', hint: 'Đầu vào có vấn đề chất lượng đang mở' },
   NOT_AVAILABLE: { text: 'Không có chỉ số', tone: 'neutral', hint: 'Năm hoặc doanh nghiệp không có kết quả' },
 };
+
+/** Valuation and market statuses (sql/022, sql/023). */
+export const VALUATION_STATUS: Record<ValuationStatus | 'INSUFFICIENT_HISTORY', Label> = {
+  VALID: { text: 'Hợp lệ', tone: 'ok' },
+  NO_PRICE: { text: 'Chưa có giá', tone: 'neutral', hint: 'Không có phiên giao dịch trước hoặc bằng ngày chọn' },
+  NO_SHARES: { text: 'Thiếu số cổ phiếu', tone: 'warn', hint: 'Chưa có số cổ phiếu lưu hành hiệu lực tại ngày này' },
+  NO_REPORT: { text: 'Chưa có BCTC', tone: 'warn', hint: 'Năm báo cáo theo chính sách hồi cứu chưa có trong dữ liệu' },
+  MISSING_INPUT: { text: 'Thiếu đầu vào', tone: 'warn', hint: 'Thiếu lợi ích cổ đông không kiểm soát' },
+  INPUT_NOT_VERIFIED: { text: 'Đầu vào chưa nghiệm thu', tone: 'bad' },
+  NEGATIVE_EARNINGS: { text: 'Lợi nhuận âm', tone: 'neutral', hint: 'P/E không có ý nghĩa khi LNST công ty mẹ ≤ 0' },
+  NEGATIVE_BOOK: { text: 'Vốn chủ âm', tone: 'neutral', hint: 'P/B không có ý nghĩa khi vốn chủ công ty mẹ ≤ 0' },
+  INSUFFICIENT_HISTORY: { text: 'Chưa đủ lịch sử', tone: 'neutral', hint: 'Cửa sổ tính (ví dụ 252 phiên) chưa đủ dữ liệu' },
+};
+
+export const METRIC_GROUP: Record<ScreeningMetricGroup, string> = {
+  FINANCIAL: 'Tài chính',
+  VALUATION: 'Định giá',
+  MARKET: 'Thị trường',
+};
+
+/** Any metric status of the screening/compare screens (financial or market). */
+export function statusLabel(status: string | null | undefined): Label {
+  if (status && status in VALUATION_STATUS && status !== 'VALID') return VALUATION_STATUS[status as ValuationStatus];
+  return labelOf(METRIC_STATUS, status);
+}
 
 export const OUTCOME: Record<ScreeningOutcome, Label> = {
   PASS: { text: 'Đạt', tone: 'ok' },

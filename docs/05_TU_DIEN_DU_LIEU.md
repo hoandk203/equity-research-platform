@@ -1,5 +1,7 @@
 # Từ điển dữ liệu vật lý Oracle v1.0.0
 
+> Giai đoạn 2 (08/11/2026): bảng `daily_prices` đã được tạo lại dạng phân vùng và có 7 bảng mới; xem [từ điển phần thị trường](05_TU_DIEN_DU_LIEU_THI_TRUONG.md). Mô tả `daily_prices` bên dưới là phiên bản 1.0.0 cũ.
+
 Sinh từ `design/schema_model.json` qua `scripts/design_schema.py`. Không sửa riêng DDL/dictionary. ID NUMBER(19) là surrogate; timestamps có timezone. Tài liệu ERD giải thích các quy tắc ngoài FK/CHECK.
 
 ## companies

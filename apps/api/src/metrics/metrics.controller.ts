@@ -1,9 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOperation, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOperation, ApiParam, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsInt, Matches, Max, Min } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsInt, IsOptional, Matches, Max, Min } from 'class-validator';
 import {
-  MAX_COMPARE_SYMBOLS, MAX_YEAR, MIN_COMPARE_SYMBOLS, MIN_YEAR, SYMBOL_PATTERN,
+  DATE_PATTERN, MAX_COMPARE_SYMBOLS, MAX_YEAR, MIN_COMPARE_SYMBOLS, MIN_YEAR, SYMBOL_PATTERN,
   type CompareResponse, type LineageResponse, type MetricCatalogItem, type MetricsResponse,
 } from '@erp/contracts';
 import { RequestId } from '../common/request-id';
@@ -26,6 +26,11 @@ export class CompareQueryDto {
   @Min(MIN_YEAR)
   @Max(MAX_YEAR)
   year!: number;
+
+  @ApiPropertyOptional({ example: '2025-06-30', description: 'Ngày cho hàng định giá/thị trường (mặc định: phiên cuối cùng)' })
+  @IsOptional()
+  @Matches(DATE_PATTERN, { message: 'date phải có dạng YYYY-MM-DD' })
+  date?: string;
 }
 
 @ApiTags('Chỉ số')
@@ -56,9 +61,9 @@ export class MetricsController {
   }
 
   @Get('compare')
-  @ApiOperation({ summary: 'S4 — So sánh 2–3 mã cùng năm, cùng phiên bản công thức; thiếu hoặc không hợp lệ là UNKNOWN' })
+  @ApiOperation({ summary: 'S4 — So sánh 2–3 mã cùng năm, cùng phiên bản công thức; thêm hàng định giá/thị trường tại date' })
   @ApiBadRequestResponse({ description: 'Số mã ngoài 2–3, mã trùng/sai hoặc không tồn tại' })
   compare(@RequestId() requestId: string, @Query() q: CompareQueryDto): Promise<CompareResponse> {
-    return this.service.compare(requestId, q.symbols, q.year);
+    return this.service.compare(requestId, q.symbols, q.year, q.date);
   }
 }

@@ -31,6 +31,7 @@ export default [
                         { sourceTag: "scope:api", onlyDependOnLibsWithTags: ["scope:shared"] },
                         { sourceTag: "scope:web", onlyDependOnLibsWithTags: ["scope:shared"] },
                         { sourceTag: "scope:db", onlyDependOnLibsWithTags: ["scope:shared"] },
+                        { sourceTag: "scope:etl", onlyDependOnLibsWithTags: ["scope:shared"] },
                         { sourceTag: "scope:shared", onlyDependOnLibsWithTags: ["scope:shared"] }
                     ]
                 }

@@ -94,9 +94,11 @@ Correction phải có ID, symbol/year/field, old/new, issuer document hash, tran
 
 Bộ mẫu chỉ ghi APPLIED_PROVISIONAL trong nhánh dữ liệu Oracle. Trong bộ mẫu v1, VNM 2025 chưa có correction có bằng chứng nên các metric BS bị chặn. Bộ mẫu v2 đã đối chiếu PDF kiểm toán VAS và bổ sung 3 correction AUTO_REVIEWED; các metric liên quan tính được provisional, chưa phải VALID. Muốn chuyển VALID phải bổ sung bảng đối chiếu toàn bộ input cần dùng, bằng chứng scope/unit/fiscal, giải quyết discrepancy, review correction. Thiếu publication date vẫn có thể cho phép VALID hồi cứu khi ghi rõ temporal mode RETROSPECTIVE; tuyệt đối không dùng như point-in-time.
 
-## 7. Hợp đồng giá ngày cho giai đoạn sau
+## 7. Hợp đồng giá ngày và định giá (`erp-market/1.0.0`, đã triển khai 08/11/2026)
 
-Một hàng = security + trading_date + provider + price_basis + source_version. OHLC/close không âm, volume không âm; high ≥ low, high ≥ open/close, low ≤ open/close khi có đủ trường. Ngày nghỉ không tự chèn giá 0. Lưu currency, price_unit/multiplier và adjusted/unadjusted/UNKNOWN; chưa biết basis không dùng để so sánh/định giá. Không có dữ liệu giá trong bộ mẫu v1; chưa chọn nguồn giá hoặc tuyên bố đã nghiệm thu.
+Một phiên = security + trading_date + đợt nhập; lưu **cả giá gốc và giá điều chỉnh** (hai dòng `price_basis`), đơn vị nguồn nghìn đồng (`price_multiplier = 1000`), khối lượng khớp lệnh. OHLC hợp lệ ở cả hai loại giá; không chèn giá cho ngày nghỉ; khoảng cách hai phiên ≤ 10 ngày. Chuỗi hiện hành do `market_heads` chỉ định; tải lại tạo đợt mới, không ghi đè. Số cổ phiếu theo ngày hiệu lực, số cuối năm phải bằng vốn 411a ÷ 10.000 khi cổ phiếu quỹ bằng 0. Vốn cổ phần, cổ phiếu quỹ, lợi ích cổ đông không kiểm soát lưu ở `capital_facts` (giá trị nhà cung cấp + giá trị BCTC kiểm toán + trang PDF, hiệu chỉnh bắt buộc có lý do), **không** thêm vào 11 chỉ tiêu của 8 công thức tài chính.
+
+Định giá (`market-formula/1.0.0`): vốn hóa = giá gốc × số cổ phiếu tại ngày; P/E = vốn hóa ÷ LNST công ty mẹ năm N; P/B = vốn hóa ÷ (vốn chủ − lợi ích CĐKKS) năm N; N theo chính sách hồi cứu `RETRO-APR01` (BCTC năm N dùng từ 01/04/N+1). Chỉ số thị trường tính trên giá điều chỉnh, chỉ có giá trị khi đủ cửa sổ. Chi tiết: [docs/18](18_KE_HOACH_TRIEN_KHAI_GIA.md) mục 1–2, kết quả [docs/19](19_KET_QUA_GIA_VA_DINH_GIA.md).
 
 ## 8. Định hướng quan hệ cho bước DDL
 

@@ -1,0 +1,122 @@
+erDiagram
+    daily_prices {
+        number price_id PK
+        number security_id FK
+        date trading_date
+        number batch_id FK
+        number artifact_id FK
+        string price_basis
+        string currency_code
+        number price_multiplier
+        number open_price
+        number high_price
+        number low_price
+        number close_price
+        number volume
+        number is_corrected
+    }
+    price_corrections {
+        number correction_id PK
+        number price_id FK
+        string field_name
+        number provider_value
+        number accepted_value
+        string reason
+        string evidence
+    }
+    share_counts {
+        number share_count_id PK
+        number security_id FK
+        date effective_date
+        number shares_outstanding
+        number batch_id FK
+        number artifact_id FK
+        string reconciliation_status
+    }
+    capital_facts {
+        number capital_fact_id PK
+        number company_id FK
+        number fiscal_year
+        string item_code
+        number provider_value_vnd
+        number value_vnd
+        number provider_artifact_id FK
+        number evidence_artifact_id FK
+        number evidence_page
+        string raw_locator
+        string correction_reason
+        string reviewed_by
+        string reviewed_at
+        number batch_id FK
+    }
+    market_heads {
+        number security_id PK
+        string data_kind PK
+        number batch_id FK
+        number lock_version
+        string updated_at
+    }
+    staging_market_rows {
+        number staging_id PK
+        number batch_id FK
+        number row_no
+        string record_kind
+        number artifact_id FK
+        string source_symbol
+        string record_key
+        string row_status
+        string payload
+    }
+    valuation_policies {
+        string policy_code PK
+        number available_month
+        number available_day
+        number is_active
+        string description
+    }
+    market_metric_definitions {
+        string metric_code PK
+        string metric_group
+        string metric_name
+        string display_unit
+        string formula_text
+        string formula_version
+        number sort_order
+    }
+    companies {
+        number company_id PK
+        string company_key
+    }
+    securities {
+        number security_id PK
+        string symbol
+    }
+    source_artifacts {
+        number artifact_id PK
+        string sha256
+    }
+    etl_batches {
+        number batch_id PK
+        string batch_key
+    }
+    etl_errors {
+        number error_id PK
+        number market_staging_id FK
+    }
+    securities ||--o{ daily_prices : "security_id"
+    source_artifacts ||--o{ daily_prices : "artifact_id"
+    etl_batches ||--o{ daily_prices : "batch_id"
+    daily_prices ||--o{ price_corrections : "price_id"
+    securities ||--o{ share_counts : "security_id"
+    etl_batches ||--o{ share_counts : "batch_id"
+    source_artifacts ||--o{ share_counts : "artifact_id"
+    companies ||--o{ capital_facts : "company_id"
+    source_artifacts ||--o{ capital_facts : "provider_artifact_id"
+    source_artifacts ||--o{ capital_facts : "evidence_artifact_id"
+    etl_batches ||--o{ capital_facts : "batch_id"
+    securities ||--o{ market_heads : "security_id"
+    etl_batches ||--o{ market_heads : "batch_id"
+    etl_batches ||--o{ staging_market_rows : "batch_id"
+    source_artifacts ||--o{ staging_market_rows : "artifact_id"
+    etl_batches ||--o{ etl_errors : "batch_id"
+    staging_market_rows ||--o{ etl_errors : "market_staging_id, batch_id"

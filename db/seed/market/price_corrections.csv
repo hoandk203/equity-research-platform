@@ -1,0 +1,7 @@
+symbol,trading_date,field,provider_value,accepted_value,reason,evidence
+FPT,2025-07-18,close,126.03,126,VNDirect close 126.03 disagrees with CafeF and SSI and is not a valid HOSE tick,CafeF close=126; SSI adjusted close=97.24 rescaled x1.29571 = 125.994
+FPT,2025-07-18,adj_close,97.266,97.243,Recomputed from the corrected unadjusted close with VNDirect's adjustment factor 1.29572,CafeF close=126; SSI adjusted close=97.24 rescaled x1.29571 = 125.994
+VNM,2025-05-13,close,56.5,58.5,VNDirect close 56.5 disagrees with CafeF and SSI,CafeF close=58.5; SSI adjusted close=52.26 rescaled x1.11951 = 58.506
+VNM,2025-05-13,adj_close,50.408,52.192,Recomputed from the corrected unadjusted close with VNDirect's adjustment factor 1.12086,CafeF close=58.5; SSI adjusted close=52.26 rescaled x1.11951 = 58.506
+VNM,2025-10-15,close,63.65,63.6,VNDirect close 63.65 disagrees with CafeF and SSI and is not a valid HOSE tick,CafeF close=63.6; SSI adjusted close=58.82 rescaled x1.08123 = 63.598
+VNM,2025-10-15,adj_close,58.871,58.825,Recomputed from the corrected unadjusted close with VNDirect's adjustment factor 1.08117,CafeF close=63.6; SSI adjusted close=58.82 rescaled x1.08123 = 63.598

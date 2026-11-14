@@ -123,3 +123,36 @@ input.invalid, select.invalid { border-color: var(--red); }
   .topbar { padding: 0.75rem 1rem; }
   .condition-row { grid-template-columns: 1fr 1fr; }
 }
+
+/* Valuation card, price tab and market stats (docs/18 §6). */
+.valuation-card { display: grid; grid-template-columns: minmax(180px, auto) 1fr; gap: 0.5rem 2rem; align-items: center; }
+.valuation-card .quote { display: flex; flex-direction: column; gap: 0.1rem; }
+.quote-price { font-family: var(--serif); font-size: 2rem; color: var(--green); line-height: 1.1; }
+.up { color: #2f7d4f; font-weight: 600; }
+.down { color: var(--red); font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem 1rem; }
+.stats-wide { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 0.6rem; }
+.stat { display: flex; flex-direction: column; gap: 0.15rem; }
+.stat-label { color: var(--muted); font-size: 0.8rem; }
+.stat-value { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); }
+.valuation-note { grid-column: 1 / -1; margin: 0.25rem 0 0; }
+.chart-controls { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; margin-bottom: 0.75rem; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.seg button { font: inherit; font-size: 0.85rem; border: none; background: var(--surface); color: var(--ink); padding: 0.3rem 0.7rem; cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: none; }
+.seg button.on { background: var(--green); color: #fff; }
+.ma-toggles { display: inline-flex; gap: 0.75rem; font-size: 0.85rem; }
+.ma-toggles label { display: inline-flex; gap: 0.3rem; align-items: center; }
+.ma-20 { color: #b07d1c; } .ma-50 { color: #3d6fa3; } .ma-200 { color: #7a4b8c; }
+.price-chart { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 0.5rem; }
+.corrections { margin: 0; padding-left: 1.1rem; }
+.corrections li { margin-bottom: 0.4rem; }
+.group-tag { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+@media (max-width: 720px) {
+  .valuation-card { grid-template-columns: 1fr; }
+}
+.seg-opt { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.75rem; font-size: 0.88rem; cursor: pointer; border-right: 1px solid var(--line); background: var(--surface); }
+.seg-opt:last-of-type { border-right: none; }
+.seg-opt.on { background: var(--green); color: #fff; }
+.seg-opt input { margin: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }

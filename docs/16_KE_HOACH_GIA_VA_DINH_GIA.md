@@ -1,6 +1,6 @@
 # Kế hoạch giai đoạn 2: giá ngày và định giá
 
-Phiên bản 1.0 — 08/11/2026. Trạng thái: **kế hoạch tổng thể, chưa triển khai**. Viết để bàn giao cho một phiên làm việc khác.
+Phiên bản 1.0 — 08/11/2026. Trạng thái: **đã triển khai** (P-01…P-09 trên 3 mã) — xem [phân tích](17_PHAN_TICH_GIA_VA_DINH_GIA.md), [kế hoạch chi tiết](18_KE_HOACH_TRIEN_KHAI_GIA.md), [kết quả](19_KET_QUA_GIA_VA_DINH_GIA.md). Viết ban đầu để bàn giao cho một phiên làm việc khác.
 
 Mục tiêu do người dùng chốt: **ứng dụng giống một công cụ phân tích cổ phiếu thật**. Ngoài câu hỏi "doanh nghiệp kinh doanh tốt không" (8 chỉ số hiện có), ứng dụng cần trả lời được "cổ phiếu đang được định giá thế nào": biểu đồ giá, lợi suất, biến động, P/E, P/B, vốn hóa, và sàng lọc kết hợp tài chính với định giá.
 

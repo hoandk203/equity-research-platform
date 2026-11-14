@@ -17,6 +17,20 @@ describe('threshold conversion', () => {
   });
 });
 
+describe('market thresholds', () => {
+  it('reads market cap in billion VND and prices in thousand VND', () => {
+    expect(toStoredThreshold(100000, 'VND', 'MARKET_CAP')).toBe(1e14);
+    expect(toStoredThreshold(95.8, 'VND', 'CLOSE_PRICE')).toBe(95800);
+    expect(toStoredThreshold(4500, 'VND_PER_SHARE', 'EPS')).toBe(4500);
+    expect(toStoredThreshold(12, 'TIMES', 'PE')).toBe(12);
+  });
+  it('round-trips market units', () => {
+    expect(toDisplayThreshold(toStoredThreshold(163196.5, 'VND', 'MARKET_CAP'), 'VND', 'MARKET_CAP')).toBe(163196.5);
+    expect(toDisplayThreshold(toStoredThreshold(26.4, 'VND', 'MA200'), 'VND', 'MA200')).toBe(26.4);
+    expect(toDisplayThreshold(toStoredThreshold(-25.06, 'PERCENT', 'RETURN_1Y'), 'PERCENT', 'RETURN_1Y')).toBe(-25.06);
+  });
+});
+
 describe('shared limits', () => {
   it('accepts tickers and rejects injection attempts', () => {
     expect(SYMBOL_PATTERN.test('VNM')).toBe(true);

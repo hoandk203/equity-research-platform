@@ -11,6 +11,8 @@ const SHOTS: Array<[string, string]> = [
   ['05-sang-loc', '/sang-loc?nam=2024&dk=NET_MARGIN~ge~10;CURRENT_RATIO~ge~1'],
   ['06-so-sanh', '/so-sanh?nam=2024&ma=FPT,HPG,VNM'],
   ['07-dot-nhap', '/dot-nhap?batch=1'],
+  ['10-sang-loc-theo-ngay', '/sang-loc?ngay=2025-06-30&dk=ROE~ge~15;PE~le~15;RETURN_1Y~gt~0'],
+  ['11-so-sanh-dinh-gia', '/so-sanh?nam=2024&ma=FPT,HPG,VNM&ngay=2025-06-30'],
 ];
 
 test('capture screens', async ({ page }) => {
@@ -22,6 +24,13 @@ test('capture screens', async ({ page }) => {
     await expect(page.locator('.state-error')).toHaveCount(0);
     await page.screenshot({ path: join(OUT, `${name}.png`), fullPage: true });
   }
+  // Price tab: wait for the chart canvas (drawn client-side after the series loads).
+  await page.goto('/doanh-nghiep/FPT?tab=gia&khoang=1N&kieu=nen');
+  await expect(page.locator('section[aria-label="Định giá"]')).toContainText('P/E');
+  await expect(page.locator('[data-testid="price-chart"] canvas').first()).toBeVisible();
+  await expect(page.locator('.state-loading')).toHaveCount(0);
+  await page.screenshot({ path: join(OUT, '09-gia-dinh-gia.png'), fullPage: true });
+
   // Lineage needs a result id that exists in this database: open it through the UI.
   await page.goto('/doanh-nghiep/VNM?nam=2025&tab=chi-so');
   await page.locator('.metric-card', { hasText: 'Sinh lời trên tổng vốn chủ sở hữu bình quân' }).getByRole('link', { name: /Truy vết/ }).click();

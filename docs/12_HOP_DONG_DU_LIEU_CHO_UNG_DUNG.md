@@ -6,8 +6,8 @@ Cập nhật 08/11/2026. Tài liệu này là điểm vào cho người viết A
 
 | Mục đích | Tài khoản | Ghi chú |
 |---|---|---|
-| Mọi màn hình | `ERP_APP` | Chỉ đọc 10 view và gọi `pkg_screening` |
-| Nhập dữ liệu (không làm trên web) | `ERP_ETL` | Script Python, qua `pkg_etl_api` |
+| Mọi màn hình | `ERP_APP` | Chỉ đọc 19 view và gọi `pkg_screening` |
+| Nhập dữ liệu (không làm trên web) | `ERP_ETL` | Qua `pkg_etl_api`: seed/bộ cài cho BCTC, `nx run etl:load` cho giá ngày |
 
 - Chuỗi kết nối: `//127.0.0.1:1521/FREEPDB1`. Driver đề xuất: `node-oracledb` chế độ thin (không cần Oracle Client).
 - Mật khẩu nằm trong `Quan_Tri_CSDL/.local/oracle_accounts.json` (không commit). Backend đọc từ biến môi trường, không hard-code.
@@ -16,7 +16,7 @@ Cập nhật 08/11/2026. Tài liệu này là điểm vào cho người viết A
 
 ## 2. Dữ liệu hiện có
 
-3 doanh nghiệp (FPT, HPG, VNM) × báo cáo năm 2022–2025, phạm vi hợp nhất. 8 chỉ số cho các năm 2023–2025; năm 2022 chỉ làm cơ sở nên không có chỉ số. Toàn bộ 72 chỉ số đều VALID, được đối chiếu với báo cáo kiểm toán. Giá cổ phiếu ngày chưa có dữ liệu; màn hình hiển thị "chưa có dữ liệu" (ADR-29).
+3 doanh nghiệp (FPT, HPG, VNM) × báo cáo năm 2022–2025, phạm vi hợp nhất. 8 chỉ số cho các năm 2023–2025; năm 2022 chỉ làm cơ sở nên không có chỉ số. Toàn bộ 72 chỉ số đều VALID, được đối chiếu với báo cáo kiểm toán. Từ giai đoạn 2: 2.991 phiên giá ngày 2022–2025 (giá gốc + điều chỉnh), 39 mốc số cổ phiếu, 36 chỉ tiêu vốn đã đối chiếu PDF; 17 chỉ số thị trường/định giá (mục 6).
 
 Tám mã chỉ số (`metric_code`): `REVENUE_GROWTH`, `GROSS_MARGIN`, `NET_MARGIN`, `ROA`, `ROE`, `LIABILITIES_ASSETS`, `CURRENT_RATIO`, `CFO_AVG_ASSETS`.
 
@@ -33,6 +33,11 @@ Tám mã chỉ số (`metric_code`): `REVENUE_GROWTH`, `GROSS_MARGIN`, `NET_MARG
 | So sánh (FR-05) | `v_current_metrics` | `WHERE symbol IN (:a,:b,:c) AND fiscal_year=:y` |
 | Đợt nhập (FR-06) | `v_import_batches`, `v_import_errors` | `ORDER BY batch_id DESC`; lỗi: `WHERE batch_id=:b` |
 | Công thức, danh sách chỉ số cho form sàng lọc | `v_metric_catalog` (sql/019) | `WHERE formula_version='1.0.0'` |
+| Danh sách: giá, thay đổi, vốn hóa | `v_market_metrics_daily` + `v_valuation_daily` | phiên cuối mỗi mã |
+| Chi tiết: thẻ định giá | `v_valuation_daily` + `v_valuation_inputs` | phiên gần nhất ≤ ngày |
+| Chi tiết: tab Giá | `v_price_history` (ngày), `v_price_monthly` (tháng), `v_price_corrections`, `v_market_metrics_daily` | `WHERE symbol=:s AND price_basis=:b AND trading_date BETWEEN …` |
+| Sàng lọc theo ngày, so sánh định giá | `pkg_screening.screen_at`, `v_market_metric_catalog` | mục 6 |
+| Số cổ phiếu, chỉ tiêu vốn (truy vết định giá) | `v_share_counts`, `v_capital_facts` | |
 
 **Truy vết lineage phải lọc theo `result_id`,** không lọc theo mã/năm/chỉ số. Cách lọc theo mã/năm/chỉ số chậm hơn khoảng 160 lần (docs/11, Q3/Q7).
 
@@ -84,7 +89,15 @@ FROM TABLE(ERP_DESIGN_V1.pkg_screening.screen(:year, :conditions_json))
 
 Ví dụ đã kiểm chứng (năm 2024, biên lãi ròng ≥ 10% và hệ số thanh toán hiện hành ≥ 1): FPT PASS, VNM PASS, HPG FAIL (biên lãi ròng 8,66%). Năm 2022: cả ba UNKNOWN vì không có chỉ số.
 
-## 6. Kiểm chứng
+## 6. Giá ngày, chỉ số thị trường và định giá (sql/020–023)
+
+- `v_price_history`: chuỗi hiện hành, hai `price_basis`, giá đã nhân `price_multiplier` (đồng), `is_corrected`, nguồn + hash.
+- `v_market_metrics_daily` (từ materialized view `mv_market_daily`): `close_vnd`, `prev_close_vnd`, `adj_*`, `ret_1d/1m/3m/6m/1y`, `volatility_1y`, `ma20/50/200`, `high_52w`, `low_52w`, `dist_52w_high`, `session_no`. Giá trị NULL khi cửa sổ chưa đủ.
+- `v_valuation_daily`: `report_year` (chính sách `RETRO-APR01`), `shares_outstanding`, `market_cap`, `eps`, `pe`, `bvps`, `pb`, `market_cap_status`/`pe_status`/`pb_status` ∈ `VALID`, `NO_SHARES`, `NO_REPORT`, `MISSING_INPUT`, `INPUT_NOT_VERIFIED`, `NEGATIVE_EARNINGS`, `NEGATIVE_BOOK`.
+- `pkg_screening.screen_at(:date, :conditions_json)`: cùng quy tắc PASS/FAIL/UNKNOWN; điều kiện trộn được 8 mã tài chính và 17 mã thị trường/định giá; ngưỡng theo đơn vị lưu trữ (PERCENT là tỷ lệ, TIMES là lần, VND là đồng). Mỗi mã dùng phiên gần nhất ≤ ngày; chỉ số tài chính lấy năm `report_year`. Trả thêm `trading_date`, `report_year`, `policy_code`; `details` có `group`. Lỗi mới: `ORA-20406` (ngày không hợp lệ) → 400.
+- MV làm mới sau mỗi đợt nhập giá (`pkg_market_import.refresh_market_views`); định giá luôn tính khi đọc vì phụ thuộc BCTC hiện hành.
+
+## 7. Kiểm chứng
 
 [check_oracle_app_api.py](../scripts/check_oracle_app_api.py), đăng nhập thật bằng tài khoản APP: **15/15 ca đạt** ([bằng chứng](../evidence/oracle_app_api/validation.json)).
 - Grant chính xác.

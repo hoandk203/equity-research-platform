@@ -1,4 +1,4 @@
-import { MAX_SCREENING_CONDITIONS, SCREENING_OPERATORS, type ScreeningOperator } from '@erp/contracts';
+import { MAX_SCREENING_CONDITIONS, METRIC_CODE_PATTERN, SCREENING_OPERATORS, type ScreeningOperator } from '@erp/contracts';
 
 /** A condition as typed by the user: threshold in display units (10 means 10%). */
 export interface DraftCondition {
@@ -25,7 +25,7 @@ export function decodeConditions(text: string | null | undefined): DraftConditio
     const [metric, opCode, raw] = p.split('~');
     const op = CODE_OP[opCode ?? ''];
     const value = Number(raw);
-    if (!metric || !/^[A-Z_]{2,60}$/.test(metric) || !op || !SCREENING_OPERATORS.includes(op) || raw === '' || !Number.isFinite(value)) return null;
+    if (!metric || !METRIC_CODE_PATTERN.test(metric) || !op || !SCREENING_OPERATORS.includes(op) || raw === '' || !Number.isFinite(value)) return null;
     out.push({ metric, op, value });
   }
   return out;

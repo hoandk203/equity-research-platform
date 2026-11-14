@@ -1,8 +1,9 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import type {
-  CompanyDetail, CompanySummary, CompareResponse, ImportBatch, ImportError, LineageResponse,
-  MetricCatalogItem, MetricsResponse, ReportLinesResponse, ScreeningCondition, ScreeningResponse,
+  CompanyDetail, CompanySummary, CompareResponse, ImportBatch, ImportError, LineageResponse, MarketMetricCatalogItem,
+  MarketSnapshot, MetricCatalogItem, MetricsResponse, PriceBasis, PriceSeriesResponse, ReportLinesResponse,
+  ScreeningCondition, ScreeningResponse, ValuationResponse,
 } from '@erp/contracts';
 import { apiGet, apiPost } from './api';
 
@@ -14,8 +15,12 @@ export const queryKeys = {
   metrics: (symbol: string, year: number) => ['metrics', symbol, year] as const,
   lineage: (resultId: number) => ['lineage', resultId] as const,
   catalog: () => ['catalog'] as const,
-  screening: (year: number, conditions: ScreeningCondition[]) => ['screening', year, conditions] as const,
-  compare: (symbols: string[], year: number) => ['compare', symbols.join(','), year] as const,
+  screening: (mode: ScreeningMode | null, conditions: ScreeningCondition[]) => ['screening', mode, conditions] as const,
+  compare: (symbols: string[], year: number, date: string | null) => ['compare', symbols.join(','), year, date] as const,
+  prices: (symbol: string, basis: PriceBasis) => ['prices', symbol, basis] as const,
+  snapshot: (symbol: string, date: string | null) => ['market-snapshot', symbol, date] as const,
+  valuation: (symbol: string, date: string | null) => ['valuation', symbol, date] as const,
+  marketCatalog: () => ['market-catalog'] as const,
   imports: () => ['imports'] as const,
   importErrors: (batchId: number) => ['import-errors', batchId] as const,
 };
@@ -42,22 +47,48 @@ export const useLineage = (resultId: number | null) =>
 export const useCatalog = () =>
   useQuery({ queryKey: queryKeys.catalog(), queryFn: () => apiGet<MetricCatalogItem[]>('/metrics/catalog'), staleTime: Infinity });
 
+/** Year mode (financial metrics of one fiscal year) or date mode (financial + valuation + market). */
+export type ScreeningMode = { year: number } | { date: string };
+
 /** Screening is a read (POST only because conditions are a structured body). */
-export const useScreening = (year: number | null, conditions: ScreeningCondition[] | null) =>
+export const useScreening = (mode: ScreeningMode | null, conditions: ScreeningCondition[] | null) =>
   useQuery({
-    queryKey: queryKeys.screening(year ?? 0, conditions ?? []),
-    queryFn: () => apiPost<ScreeningResponse>('/screening', { year, conditions }),
-    enabled: year !== null && !!conditions?.length,
+    queryKey: queryKeys.screening(mode, conditions ?? []),
+    queryFn: () => apiPost<ScreeningResponse>('/screening', { ...mode, conditions }),
+    enabled: mode !== null && !!conditions?.length,
     retry: false,
   });
 
-export const useCompare = (symbols: string[], year: number) =>
+export const useCompare = (symbols: string[], year: number, date: string | null = null) =>
   useQuery({
-    queryKey: queryKeys.compare(symbols, year),
-    queryFn: () => apiGet<CompareResponse>('/compare', { symbols: symbols.join(','), year }),
+    queryKey: queryKeys.compare(symbols, year, date),
+    queryFn: () => apiGet<CompareResponse>('/compare', { symbols: symbols.join(','), year, date }),
     enabled: symbols.length >= 2 && symbols.length <= 3,
     retry: false,
   });
+
+/** Full daily series of one basis (the chart zooms client-side, MAs need the full history). */
+export const usePrices = (symbol: string, basis: PriceBasis) =>
+  useQuery({
+    queryKey: queryKeys.prices(symbol, basis),
+    queryFn: () => apiGet<PriceSeriesResponse>(`/companies/${encodeURIComponent(symbol)}/prices`, { basis }),
+    staleTime: 5 * 60_000,
+  });
+
+export const useMarketSnapshot = (symbol: string, date: string | null = null) =>
+  useQuery({
+    queryKey: queryKeys.snapshot(symbol, date),
+    queryFn: () => apiGet<MarketSnapshot>(`/companies/${encodeURIComponent(symbol)}/market-metrics`, { date }),
+  });
+
+export const useValuation = (symbol: string, date: string | null = null) =>
+  useQuery({
+    queryKey: queryKeys.valuation(symbol, date),
+    queryFn: () => apiGet<ValuationResponse>(`/companies/${encodeURIComponent(symbol)}/valuation`, { date }),
+  });
+
+export const useMarketCatalog = () =>
+  useQuery({ queryKey: queryKeys.marketCatalog(), queryFn: () => apiGet<MarketMetricCatalogItem[]>('/market/catalog'), staleTime: Infinity });
 
 export const useImports = () => useQuery({ queryKey: queryKeys.imports(), queryFn: () => apiGet<ImportBatch[]>('/imports') });
 

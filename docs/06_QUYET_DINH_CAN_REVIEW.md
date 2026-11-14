@@ -90,3 +90,16 @@ Chi tiết 22 quan sát và trang/hash nằm trong [issuer_reconciliation_v2.csv
 | ADR-31 | Sàng lọc PASS/FAIL/UNKNOWN chạy trong database (`pkg_screening`, điều kiện JSON, không SQL động); APP được EXECUTE gói này | Một nguồn quy tắc cho mọi client; backend không ghép SQL từ đầu vào người dùng |
 
 Đã kiểm chứng: 15/15 ca API ứng dụng và 38/38 ca phân quyền. Nguồn: [docs/12](12_HOP_DONG_DU_LIEU_CHO_UNG_DUNG.md).
+
+## Quyết định bổ sung giai đoạn 2: giá ngày và định giá (08/11/2026)
+
+| ID | Quyết định đã áp dụng | Ảnh hưởng để review |
+|---|---|---|
+| ADR-32 | Thay ADR-29 về giá: nhập giá ngày 2022–2025 cho 3 mã từ VNDirect (nguồn chính), đối chiếu từng trường với CafeF; mọi khác biệt do SSI phân xử (quy đổi giá điều chỉnh về giá gốc + bước giá HOSE); không phân xử được thì dừng | 3 trường VNDirect được sửa có bằng chứng, 5 khác biệt của CafeF bị bác; không chọn nguồn tùy ý |
+| ADR-33 | Lưu cả giá gốc và giá điều chỉnh; giá theo đợt nhập + con trỏ `market_heads`; nạp lại cùng chuỗi cũ thì chuỗi đó trở lại hiện hành | Tải lại sau sự kiện doanh nghiệp không ghi đè lịch sử; vốn hóa dùng giá gốc ổn định |
+| ADR-34 | Vốn cổ phần, cổ phiếu quỹ, lợi ích CĐKKS ở bảng `capital_facts` riêng, không thêm vào 11 chỉ tiêu của snapshot tài chính | Giữ nguyên 72 chỉ số và engine 1.0.0; P/B dùng vốn chủ thuộc công ty mẹ |
+| ADR-35 | Định giá theo chính sách hồi cứu cấu hình được (`valuation_policies`, `RETRO-APR01`); P/E dùng LNST công ty mẹ; số cổ phiếu theo ngày hiệu lực, số cuối năm được CSDL kiểm với vốn ÷ mệnh giá | Có thể đổi sang ngày công bố thật khi xác minh được; giao diện luôn gắn nhãn hồi cứu |
+| ADR-36 | Chỉ số thị trường lưu trong materialized view làm mới sau mỗi đợt giá; định giá là view tính khi đọc; `daily_prices` phân vùng theo năm | MV nhanh ~1.000 lần so với tính trực tiếp; định giá không bị cũ khi BCTC hiện hành đổi; phân vùng giảm buffer gets 30–72% |
+| ADR-37 | `pkg_screening.screen_at` thêm cạnh `screen` (giữ nguyên chữ ký cũ); tính trước các tập con bằng CTE `MATERIALIZE` | 600 công ty: 4,7 s → 0,23 s, cùng kết quả |
+
+Đã kiểm chứng: 20/20 ca CSDL thị trường, 273/273 giá trị tham chiếu độc lập, hồi quy 17 + 38 + 10 ca, API 38/38, Playwright 13/13, cài từ đầu. Nguồn: [docs/19](19_KET_QUA_GIA_VA_DINH_GIA.md).

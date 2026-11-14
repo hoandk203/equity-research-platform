@@ -12,11 +12,13 @@ export class CompaniesService {
    * accent-insensitive key: "hoa phat" finds "Hòa Phát". This is presentation logic only.
    */
   async list(requestId: string, q?: string): Promise<CompanySummary[]> {
-    const [directory, sets] = await Promise.all([this.repo.directory(requestId), this.repo.reportSets(requestId)]);
+    const [directory, sets, quotes] = await Promise.all([
+      this.repo.directory(requestId), this.repo.reportSets(requestId), this.repo.quotes(requestId),
+    ]);
     const key = searchKey(q ?? '');
     return directory
       .filter((c) => !key || searchKey(c.symbol).includes(key) || searchKey(c.companyName).includes(key))
-      .map((c) => ({ ...c, years: sets.filter((s) => s.symbol === c.symbol).map((s) => s.fiscalYear) }));
+      .map((c) => ({ ...c, years: sets.filter((s) => s.symbol === c.symbol).map((s) => s.fiscalYear), quote: quotes.get(c.symbol) ?? null }));
   }
 
   async detail(requestId: string, symbol: string): Promise<CompanyDetail> {

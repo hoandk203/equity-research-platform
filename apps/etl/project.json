@@ -1,0 +1,66 @@
+{
+  "name": "etl",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/etl/src",
+  "tags": [
+    "scope:etl"
+  ],
+  "targets": {
+    "fetch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/etl/src/fetch.ts",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
+    "build-dataset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/etl/src/build-dataset.ts",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
+    "load": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/etl/src/load.ts",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
+    "export-seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/etl/src/export-seed.ts",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": false
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test apps/etl/src/lib/*.spec.ts",
+        "cwd": "{workspaceRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/src/**/*"
+      ],
+      "cache": true
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/etl/tsconfig.json",
+        "cwd": "{workspaceRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.json"
+      ],
+      "cache": true
+    }
+  }
+}
